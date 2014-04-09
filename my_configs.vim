@@ -19,3 +19,7 @@ set gfn=Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
 
 " linenumbers
 set number
+
+" Indent to 2
+set shiftwidth=2
+set tabstop=2
