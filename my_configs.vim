@@ -51,3 +51,6 @@ endfunction
 let g:lessmode = 0
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
+
+" Brackets and stuff
+inoremap $r #{}<esc>i
