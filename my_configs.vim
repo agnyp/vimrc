@@ -54,3 +54,4 @@ inoremap <F5> <Esc>:call LessMode()<CR>
 
 " Brackets and stuff
 inoremap $r #{}<esc>i
+vnoremap $r <esc>`>a}<esc>`<i#{<esc>
