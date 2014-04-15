@@ -1,3 +1,5 @@
+" Load scripts
+source ~/.vim_runtime/my_scripts/autoread.vim
 
 " Smart way to move between windows
 " like it that way better ...
