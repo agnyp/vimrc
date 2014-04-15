@@ -169,5 +169,4 @@ function! WatchForChanges(bufname, ...)
   echo msg
   let @"=reg_saved
 endfunction
-"call WatchForChanges('*', {'toggle': 1, 'autoread': <bang>0})
 
