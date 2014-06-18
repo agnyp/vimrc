@@ -45,8 +45,10 @@ function! LessMode()
     let onoff = 'off'
     unmap d
     unmap j
+    map j gj
     unmap u
     unmap k
+    map k gk
   endif
   echohl Label | echo "Less mode" onoff | echohl None
 endfunction
