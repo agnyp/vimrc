@@ -9,6 +9,12 @@ unmap <C-l>
 map gh <C-W>h
 map gl <C-W>l
 
+" map 0 back
+map 0 0
+
+" remove all indentation from line
+map <C-L> i0<C-d><esc>
+
 " Settings for solarized fonts
 set t_Co=16
 let g:solarized_termcolors=256
