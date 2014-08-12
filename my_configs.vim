@@ -32,6 +32,13 @@ set number
 set shiftwidth=2
 set tabstop=2
 
+" some leader-stuff
+map <leader>c :q<cr>
+map <leader>s <C-F>
+map <leader>l :source ~/.vimrc<cr>
+map <leader>fo <esc>02f'a, :focus => true<esc>
+map <leader>fn <esc>0f,dfe<esc>
+
 " Switch quickly between pager and normal mode
 " using F5-Key
 function! LessMode()
