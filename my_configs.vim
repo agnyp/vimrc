@@ -37,7 +37,9 @@ map <leader>c :q<cr>
 map <leader>s <C-F>
 map <leader>l :source ~/.vimrc<cr>
 map <leader>fo <esc>02f'a, :focus => true<esc>
-map <leader>fn <esc>0f,dfe<esc>
+map <leader>fn <esc>02f'f,dfe<esc>
+
+autocmd VimEnter * unmap! <leader>p
 
 " Switch quickly between pager and normal mode
 " using F5-Key
