@@ -1,6 +1,15 @@
 " Load scripts
 source ~/.vim_runtime/my_scripts/autoread.vim
 
+silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
+
+" ignore whitespace in vimdiff
+if &diff
+  " diff mode
+  set diffopt+=iwhite
+endif
+
+
 " Smart way to move between windows
 " like it that way better ...
 unmap <C-h>
@@ -14,6 +23,12 @@ map 0 0
 
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
+" remove trailing whitespace
+map <F6> :%s/\s\+$<CR>
+map <F7> ]c
+map <F8> [c
+map <F9> :set wrap<cr>
+map <C-F9> :set nowrap<cr>
 
 " Settings for solarized fonts
 set t_Co=16
@@ -33,13 +48,17 @@ set shiftwidth=2
 set tabstop=2
 
 " some leader-stuff
+map <leader>h :map <Space <del>><cr>
 map <leader>c :q<cr>
 map <leader>s <C-F>
 map <leader>l :source ~/.vimrc<cr>
 map <leader>fo <esc>02f'a, :focus => true<esc>
 map <leader>fn <esc>02f'f,dfe<esc>
+map <leader>d :qa<cr>
 
 autocmd VimEnter * unmap! <leader>p
+
+
 
 " Switch quickly between pager and normal mode
 " using F5-Key
@@ -74,3 +93,11 @@ inoremap <F5> <Esc>:call LessMode()<CR>
 " Brackets and stuff
 inoremap $r #{}<esc>i
 vnoremap $r <esc>`>a}<esc>`<i#{<esc>
+
+" move lines
+nnoremap <C-Down> :m .+1<CR>==
+nnoremap <C-Up> :m .-2<CR>==
+inoremap <C-Down> <Esc>:m .+1<CR>==gi
+inoremap <C-Up> <Esc>:m .-2<CR>==gi
+vnoremap <C-Down> :m '>+1<CR>gv=gv
+vnoremap <C-Up> :m '<-2<CR>gv=gv
