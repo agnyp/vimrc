@@ -51,12 +51,14 @@ set tabstop=2
 map <leader>h :map <Space <del>><cr>
 map <leader>c :q<cr>
 map <leader>s <C-F>
+map <leader>t <C-S>
 map <leader>l :source ~/.vimrc<cr>
 map <leader>fo <esc>02f'a, :focus => true<esc>
 map <leader>fO <esc>02f"a, :focus => true<esc>
 map <leader>fn <esc>02f'f,dfe<esc>
 map <leader>fN <esc>02f"f,dfe<esc>
 map <leader>d :qa<cr>
+nmap <leader>cf ct_
 
 autocmd VimEnter * unmap! <leader>p
 
