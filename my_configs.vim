@@ -3,11 +3,13 @@ source ~/.vim_runtime/my_scripts/autoread.vim
 
 silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
 
+" Vimdiff-stuff
 " ignore whitespace in vimdiff
 if &diff
   " diff mode
   set diffopt+=iwhite
 endif
+autocmd FilterWritePre * if &diff | setlocal wrap< | endif
 
 
 " Smart way to move between windows
