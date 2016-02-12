@@ -27,7 +27,7 @@ nmap # '
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
 " remove trailing whitespace
-map <F6> :%s/\s\+$<CR>
+map <F6> :%s/\s\+$<CR>:noh<CR>
 map <F7> ]c
 map <F8> [c
 map <F9> :set wrap<cr>
