@@ -22,6 +22,7 @@ map gl <C-W>l
 
 " map 0 back
 map 0 0
+nmap # '
 
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
