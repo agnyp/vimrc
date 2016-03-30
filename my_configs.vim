@@ -60,7 +60,8 @@ map <leader>fo <esc>02f'a, :focus => true<esc>
 map <leader>fO <esc>02f"a, :focus => true<esc>
 map <leader>fn <esc>02f'f,dfe<esc>
 map <leader>fN <esc>02f"f,dfe<esc>
-map <leader>d :qa<cr>
+map <leader>d :mksession!<CR>:xa<CR>
+map <leader>dd :xa<CR>
 nmap <leader>cf ct_
 
 autocmd VimEnter * unmap! <leader>p
@@ -100,6 +101,8 @@ inoremap <F5> <Esc>:call LessMode()<CR>
 " Brackets and stuff
 inoremap $r #{}<esc>i
 vnoremap $r <esc>`>a}<esc>`<i#{<esc>
+inoremap $t "#{}"<esc>i
+vnoremap $t <esc>`>a}"<esc>`<i"#{<esc>h
 
 " move lines
 nnoremap <C-Down> :m .+1<CR>==
