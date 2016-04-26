@@ -61,7 +61,6 @@ map <leader>fO <esc>02f"a, :focus => true<esc>
 map <leader>fn <esc>02f'f,dfe<esc>
 map <leader>fN <esc>02f"f,dfe<esc>
 map <leader>d :mksession!<CR>:xa<CR>
-map <leader>dd :xa<CR>
 nmap <leader>cf ct_
 
 autocmd VimEnter * unmap! <leader>p
