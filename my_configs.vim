@@ -1,7 +1,10 @@
 " Load scripts
 source ~/.vim_runtime/my_scripts/autoread.vim
 
-silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
+" silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
+" au FocusGained,BufEnter,CursorMoved * :silent! !
+au CursorMovedI,CursorMoved * :silent! !
+au FocusLost,WinLeave * :silent! w
 
 " Vimdiff-stuff
 " ignore whitespace in vimdiff
