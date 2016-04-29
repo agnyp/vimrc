@@ -1,5 +1,6 @@
 " Load scripts
 source ~/.vim_runtime/my_scripts/autoread.vim
+source ~/.vim_runtime/my_scripts/less_mode.vim
 
 " silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
 " au FocusGained,BufEnter,CursorMoved * :silent! !
@@ -19,7 +20,6 @@ autocmd FilterWritePre * if &diff | setlocal wrap< | endif
 " like it that way better ...
 unmap <C-h>
 unmap <C-l>
-
 map gh <C-W>h
 map gl <C-W>l
 
@@ -29,6 +29,10 @@ nmap # '
 
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
+
+" Function keys
+nnoremap <F5> :call LessMode()<CR>
+inoremap <F5> <Esc>:call LessMode()<CR>
 " remove trailing whitespace
 map <F6> :%s/\s\+$<CR>:noh<CR>
 map <F7> ]c
@@ -67,38 +71,6 @@ map <leader>d :mksession!<CR>:xa<CR>
 nmap <leader>cf ct_
 
 autocmd VimEnter * unmap! <leader>p
-
-
-
-" Switch quickly between pager and normal mode
-" using F5-Key
-function! LessMode()
-  if g:lessmode == 0
-    let g:lessmode = 1
-    let onoff = 'on'
-    " Scroll half a page down
-    noremap <script> d <C-D>
-    " Scroll one line down
-    noremap <script> j <C-E>
-    " Scroll half a page up
-    noremap <script> u <C-U>
-    " Scroll one line up
-    noremap <script> k <C-Y>
-  else
-    let g:lessmode = 0
-    let onoff = 'off'
-    unmap d
-    unmap j
-    map j gj
-    unmap u
-    unmap k
-    map k gk
-  endif
-  echohl Label | echo "Less mode" onoff | echohl None
-endfunction
-let g:lessmode = 0
-nnoremap <F5> :call LessMode()<CR>
-inoremap <F5> <Esc>:call LessMode()<CR>
 
 " Brackets and stuff
 inoremap $r #{}<esc>i
