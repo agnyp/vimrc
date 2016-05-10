@@ -2,10 +2,11 @@
 source ~/.vim_runtime/my_scripts/autoread.vim
 source ~/.vim_runtime/my_scripts/less_mode.vim
 
+" Watch for changes
 " silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
 " au FocusGained,BufEnter,CursorMoved * :silent! !
-au CursorMovedI,CursorMoved * :silent! !
-au FocusLost,WinLeave * :silent! w
+au FocusGained,BufEnter,CursorMovedI,CursorMoved * :silent! !
+" au FocusLost,WinLeave * :silent! w
 
 " Vimdiff-stuff
 " ignore whitespace in vimdiff
@@ -69,6 +70,7 @@ map <leader>fn <esc>02f'f,dfe<esc>
 map <leader>fN <esc>02f"f,dfe<esc>
 map <leader>d :mksession!<CR>:xa<CR>
 nmap <leader>cf ct_
+nmap <silent> <leader>y :YRShow<CR>
 
 autocmd VimEnter * unmap! <leader>p
 
