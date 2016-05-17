@@ -2,6 +2,10 @@
 source ~/.vim_runtime/my_scripts/autoread.vim
 source ~/.vim_runtime/my_scripts/less_mode.vim
 
+" Configure Gundo
+let g:gundo_width = 60
+let g:gundo_preview_height = 40
+
 " Watch for changes
 " silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
 " au FocusGained,BufEnter,CursorMoved * :silent! !
@@ -32,6 +36,7 @@ nmap # '
 map <C-L> i0<C-d><esc>
 
 " Function keys
+nnoremap <F4> :GundoToggle<CR>
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
 " remove trailing whitespace
