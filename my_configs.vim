@@ -36,6 +36,7 @@ nmap # '
 map <C-L> i0<C-d><esc>
 
 " Function keys
+nnoremap <F3> :TlistToggle<CR>
 nnoremap <F4> :GundoToggle<CR>
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
