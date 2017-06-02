@@ -66,6 +66,8 @@ set shiftwidth=2
 set tabstop=2
 
 " some leader-stuff
+map <leader>co <esc>oconsole.log('huhu')<esc>Fh,<esc>==
+map <leader>W <esc>:w !sudo tee %<cr>
 map <leader>h :map <Space <del>><cr>
 map <leader>c :q<cr>
 map <leader>s <C-F>
