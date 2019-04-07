@@ -1,6 +1,9 @@
 " Load scripts
 source ~/.vim_runtime/my_scripts/autoread.vim
 source ~/.vim_runtime/my_scripts/less_mode.vim
+" source ~/.vim_runtime/my_scripts/instant-markdown.vim
+
+filetype plugin on
 
 " Configure Gundo
 let g:gundo_width = 60
