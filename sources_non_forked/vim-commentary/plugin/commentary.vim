@@ -96,9 +96,7 @@ if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
   nmap gc  <Plug>Commentary
   omap gc  <Plug>Commentary
   nmap gcc <Plug>CommentaryLine
-  if maparg('c','n') ==# ''
-    nmap cgc <Plug>ChangeCommentary
-  endif
+  nmap cgc <Plug>ChangeCommentary
   nmap gcu <Plug>Commentary<Plug>Commentary
 endif
 
