@@ -1,12 +1,15 @@
-snippet if # {{#value}} ... {{/value}}
+# if {{#value}} ... {{/value}}
+snippet if
 	{{#${1:value}}}
 	${0}
 	{{/$1}}
-snippet ifn # {{^value}} ... {{/value}}
+# if not {{^value}} ... {{/value}}
+snippet ifn
 	{{^${1:value}}}
 	${0}
 	{{/$1}}
-snippet ife # {{#value}} ... {{/value}} {{^value}} ... {{/value}}
+# if else {{#value}} ... {{/value}} {{^value}} ... {{/value}}
+snippet ife
 	{{#${1:value}}}
 	${2}
 	{{/$1}}

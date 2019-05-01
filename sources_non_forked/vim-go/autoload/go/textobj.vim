@@ -13,7 +13,7 @@ endif
 " < >
 " t for tag
 
-function! go#textobj#Function(mode) abort
+function! go#textobj#Function(mode)
   let offset = go#util#OffsetCursor()
 
   let fname = shellescape(expand("%:p"))
@@ -84,7 +84,7 @@ function! go#textobj#Function(mode) abort
   call cursor(info.rbrace.line-1, 1)
 endfunction
 
-function! go#textobj#FunctionJump(mode, direction) abort
+function! go#textobj#FunctionJump(mode, direction)
   " get count of the motion. This should be done before all the normal
   " expressions below as those reset this value(because they have zero
   " count!). We abstract -1 because the index starts from 0 in motion.

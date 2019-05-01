@@ -14,12 +14,12 @@ else
   let g:ctrlp_ext_vars = [s:go_decls_var]
 endif
 
-function! ctrlp#decls#init() abort
+function! ctrlp#decls#init()
   cal s:enable_syntax()
   return s:decls
 endfunction
 
-function! ctrlp#decls#exit() abort
+function! ctrlp#decls#exit()
   unlet! s:decls s:current_dir s:target
 endfunction
 
@@ -28,7 +28,7 @@ endfunction
 "  a:mode   the mode that has been chosen by pressing <cr> <c-v> <c-t> or <c-x>
 "           the values are 'e', 'v', 't' and 'h', respectively
 "  a:str    the selected string
-function! ctrlp#decls#accept(mode, str) abort
+function! ctrlp#decls#accept(mode, str)
   let cd = exists('*haslocaldir') && haslocaldir() ? 'lcd ' : 'cd '
   let dir = getcwd()
   try
@@ -56,7 +56,7 @@ function! ctrlp#decls#accept(mode, str) abort
   endtry
 endfunction
 
-function! ctrlp#decls#enter() abort
+function! ctrlp#decls#enter()
   let s:current_dir = fnameescape(expand('%:p:h'))
   let s:decls = []
 
@@ -130,7 +130,7 @@ function! ctrlp#decls#enter() abort
   endfor
 endfunc
 
-function! s:enable_syntax() abort
+function! s:enable_syntax()
   if !(has('syntax') && exists('g:syntax_on'))
     return
   endif
@@ -148,7 +148,7 @@ endfunction
 
 let s:id = g:ctrlp_builtins + len(g:ctrlp_ext_vars)
 
-function! ctrlp#decls#cmd(mode, ...) abort
+function! ctrlp#decls#cmd(mode, ...)
   let s:mode = a:mode
   if a:0 && !empty(a:1)
     let s:target = a:1

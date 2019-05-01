@@ -1,6 +1,6 @@
 let s:sock_type = (has('win32') || has('win64')) ? 'tcp' : 'unix'
 
-function! s:gocodeCurrentBuffer() abort
+function! s:gocodeCurrentBuffer()
   let buf = getline(1, '$')
   if &encoding != 'utf-8'
     let buf = map(buf, 'iconv(v:val, &encoding, "utf-8")')
@@ -16,7 +16,7 @@ function! s:gocodeCurrentBuffer() abort
   return file
 endfunction
 
-function! s:gocodeCommand(cmd, preargs, args) abort
+function! s:gocodeCommand(cmd, preargs, args)
   for i in range(0, len(a:args) - 1)
     let a:args[i] = go#util#Shellescape(a:args[i])
   endfor
@@ -59,12 +59,12 @@ function! s:gocodeCommand(cmd, preargs, args) abort
   endif
 endfunction
 
-function! s:gocodeCurrentBufferOpt(filename) abort
+function! s:gocodeCurrentBufferOpt(filename)
   return '-in=' . a:filename
 endfunction
 
 let s:optionsEnabled = 0
-function! s:gocodeEnableOptions() abort
+function! s:gocodeEnableOptions()
   if s:optionsEnabled 
     return
   endif
@@ -78,14 +78,14 @@ function! s:gocodeEnableOptions() abort
 
   call go#util#System(printf('%s set propose-builtins %s', go#util#Shellescape(bin_path), s:toBool(get(g:, 'go_gocode_propose_builtins', 1))))
   call go#util#System(printf('%s set autobuild %s', go#util#Shellescape(bin_path), s:toBool(get(g:, 'go_gocode_autobuild', 1))))
-  call go#util#System(printf('%s set unimported-packages %s', go#util#Shellescape(bin_path), s:toBool(get(g:, 'go_gocode_unimported_packages', 0))))
+  call go#util#System(printf('%s set unimported-packages %s', go#util#Shellescape(bin_path), s:toBool(get(g:, 'go_gocode_unimported_packages', 1))))
 endfunction
 
-function! s:toBool(val) abort
+function! s:toBool(val)
   if a:val | return 'true ' | else | return 'false' | endif
 endfunction
 
-function! s:gocodeAutocomplete() abort
+function! s:gocodeAutocomplete()
   call s:gocodeEnableOptions()
 
   let filename = s:gocodeCurrentBuffer()
@@ -96,7 +96,7 @@ function! s:gocodeAutocomplete() abort
   return result
 endfunction
 
-function! go#complete#GetInfo() abort
+function! go#complete#GetInfo()
   let offset = go#util#OffsetCursor()+1
   let filename = s:gocodeCurrentBuffer()
   let result = s:gocodeCommand('autocomplete',
@@ -137,7 +137,7 @@ function! go#complete#GetInfo() abort
   return ""
 endfunction
 
-function! go#complete#Info(auto) abort
+function! go#complete#Info(auto)
   " auto is true if we were called by g:go_auto_type_info's autocmd
   let result = go#complete#GetInfo()
   if !empty(result)
@@ -147,12 +147,12 @@ function! go#complete#Info(auto) abort
   endif
 endfunction
 
-function! s:trim_bracket(val) abort
+function! s:trim_bracket(val)
   let a:val.word = substitute(a:val.word, '[(){}\[\]]\+$', '', '')
   return a:val
 endfunction
 
-function! go#complete#Complete(findstart, base) abort
+function! go#complete#Complete(findstart, base)
   "findstart = 1 when we need to get the text length
   if a:findstart == 1
     execute "silent let g:gocomplete_completions = " . s:gocodeAutocomplete()
@@ -167,7 +167,7 @@ function! go#complete#Complete(findstart, base) abort
   endif
 endf
 
-function! go#complete#ToggleAutoTypeInfo() abort
+function! go#complete#ToggleAutoTypeInfo()
   if get(g:, "go_auto_type_info", 0)
     let g:go_auto_type_info = 0
     call go#util#EchoProgress("auto type info disabled")

@@ -9,7 +9,7 @@ let s:handlers = {}
 " Spawn is a wrapper around s:spawn. It can be executed by other files and
 " scripts if needed. Desc defines the description for printing the status
 " during the job execution (useful for statusline integration).
-function! go#jobcontrol#Spawn(bang, desc, args) abort
+function! go#jobcontrol#Spawn(bang, desc, args)
   " autowrite is not enabled for jobs
   call go#cmd#autowrite()
 
@@ -17,8 +17,31 @@ function! go#jobcontrol#Spawn(bang, desc, args) abort
   return job.id
 endfunction
 
+" Statusline returns the current status of the job
+function! go#jobcontrol#Statusline() abort
+  if empty(s:jobs)
+    return ''
+  endif
+
+  let import_path =  go#package#ImportPath(expand('%:p:h'))
+
+  for job in values(s:jobs)
+    if job.importpath != import_path
+      continue
+    endif
+
+    if job.state == "SUCCESS"
+      return ''
+    endif
+
+    return printf("%s ... [%s]", job.desc, job.state)
+  endfor
+
+  return ''
+endfunction
+
 " AddHandler adds a on_exit callback handler and returns the id.
-function! go#jobcontrol#AddHandler(handler) abort
+function! go#jobcontrol#AddHandler(handler)
   let i = len(s:handlers)
   while has_key(s:handlers, string(i))
     let i += 1
@@ -29,7 +52,7 @@ function! go#jobcontrol#AddHandler(handler) abort
 endfunction
 
 " RemoveHandler removes a callback handler by id.
-function! go#jobcontrol#RemoveHandler(id) abort
+function! go#jobcontrol#RemoveHandler(id)
   unlet s:handlers[a:id]
 endfunction
 
@@ -37,10 +60,10 @@ endfunction
 " a job is started a reference will be stored inside s:jobs. spawn changes the
 " GOPATH when g:go_autodetect_gopath is enabled. The job is started inside the
 " current files folder.
-function! s:spawn(bang, desc, args) abort
-  let job = {
-        \ 'desc': a:desc,
-        \ 'bang': a:bang,
+function! s:spawn(bang, desc, args)
+  let job = { 
+        \ 'desc': a:desc, 
+        \ 'bang': a:bang, 
         \ 'winnr': winnr(),
         \ 'importpath': go#package#ImportPath(expand('%:p:h')),
         \ 'state': "RUNNING",
@@ -90,7 +113,7 @@ endfunction
 " references and also displaying errors in the quickfix window collected by
 " on_stderr handler. If there are no errors and a quickfix window is open,
 " it'll be closed.
-function! s:on_exit(job_id, exit_status, event) dict abort
+function! s:on_exit(job_id, exit_status)
   let std_combined = self.stderr + self.stdout
 
   let cd = exists('*haslocaldir') && haslocaldir() ? 'lcd ' : 'cd '
@@ -99,10 +122,9 @@ function! s:on_exit(job_id, exit_status, event) dict abort
 
   call s:callback_handlers_on_exit(s:jobs[a:job_id], a:exit_status, std_combined)
 
-  let l:listtype = go#list#Type("quickfix")
   if a:exit_status == 0
-    call go#list#Clean(l:listtype)
-    call go#list#Window(l:listtype)
+    call go#list#Clean(0)
+    call go#list#Window(0)
 
     let self.state = "SUCCESS"
     call go#util#EchoSuccess("SUCCESS")
@@ -127,7 +149,8 @@ function! s:on_exit(job_id, exit_status, event) dict abort
 
   " if we are still in the same windows show the list
   if self.winnr == winnr()
-    call go#list#Populate(l:listtype, errors, self.desc)
+    let l:listtype = "locationlist"
+    call go#list#Populate(l:listtype, errors)
     call go#list#Window(l:listtype, len(errors))
     if !empty(errors) && !self.bang
       call go#list#JumpToFirst(l:listtype)
@@ -136,7 +159,7 @@ function! s:on_exit(job_id, exit_status, event) dict abort
 endfunction
 
 " callback_handlers_on_exit runs all handlers for job on exit event.
-function! s:callback_handlers_on_exit(job, exit_status, data) abort
+function! s:callback_handlers_on_exit(job, exit_status, data)
   if empty(s:handlers)
     return
   endif
@@ -147,15 +170,45 @@ function! s:callback_handlers_on_exit(job, exit_status, data) abort
 endfunction
 
 " on_stdout is the stdout handler for jobstart(). It collects the output of
-" stderr and stores them to the jobs internal stdout list.
-function! s:on_stdout(job_id, data) dict abort
+" stderr and stores them to the jobs internal stdout list. 
+function! s:on_stdout(job_id, data)
   call extend(self.stdout, a:data)
 endfunction
 
 " on_stderr is the stderr handler for jobstart(). It collects the output of
 " stderr and stores them to the jobs internal stderr list.
-function! s:on_stderr(job_id, data) dict abort
+function! s:on_stderr(job_id, data)
   call extend(self.stderr, a:data)
+endfunction
+
+" abort_all aborts all current jobs created with s:spawn()
+function! s:abort_all()
+  if empty(s:jobs)
+    return
+  endif
+
+  for id in keys(s:jobs)
+    if id > 0
+      silent! call jobstop(id)
+    endif
+  endfor
+
+  let s:jobs = {}
+endfunction
+
+" abort aborts the job with the given name, where name is the first argument
+" passed to s:spawn()
+function! s:abort(path)
+  if empty(s:jobs)
+    return
+  endif
+
+  for job in values(s:jobs)
+    if job.importpath == path && job.id > 0
+      silent! call jobstop(job.id)
+      unlet s:jobs['job.id']
+    endif
+  endfor
 endfunction
 
 " vim: sw=2 ts=2 et
