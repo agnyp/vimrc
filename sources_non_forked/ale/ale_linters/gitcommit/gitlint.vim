@@ -1,9 +1,11 @@
 " Author: Nick Yamane <nick.diego@gmail.com>
 " Description: gitlint for git commit message files
 
-call ale#Set('gitcommit_gitlint_executable', 'gitlint')
-call ale#Set('gitcommit_gitlint_options', '')
-call ale#Set('gitcommit_gitlint_use_global', get(g:, 'ale_use_global_executables', 0))
+let g:ale_gitcommit_gitlint_executable =
+\   get(g:, 'ale_gitcommit_gitlint_executable', 'gitlint')
+let g:ale_gitcommit_gitlint_options = get(g:, 'ale_gitcommit_gitlint_options', '')
+let g:ale_gitcommit_gitlint_use_global = get(g:, 'ale_gitcommit_gitlint_use_global', get(g:, 'ale_use_global_executables', 0))
+
 
 function! ale_linters#gitcommit#gitlint#GetExecutable(buffer) abort
     return ale#python#FindExecutable(a:buffer, 'gitcommit_gitlint', ['gitlint'])
@@ -11,9 +13,12 @@ endfunction
 
 function! ale_linters#gitcommit#gitlint#GetCommand(buffer) abort
     let l:options = ale#Var(a:buffer, 'gitcommit_gitlint_options')
-
-    return '%e' . ale#Pad(l:options) . ' lint'
+    let l:executable = ale_linters#gitcommit#gitlint#GetExecutable(a:buffer)
+    return ale#Escape(l:executable)
+    \   . (!empty(l:options) ? ' ' . l:options : '')
+    \   . ' lint'
 endfunction
+
 
 function! ale_linters#gitcommit#gitlint#Handle(buffer, lines) abort
     " Matches patterns line the following:
@@ -40,6 +45,7 @@ function! ale_linters#gitcommit#gitlint#Handle(buffer, lines) abort
     return l:output
 endfunction
 
+
 call ale#linter#Define('gitcommit', {
 \   'name': 'gitlint',
 \   'output_stream': 'stderr',
@@ -47,3 +53,4 @@ call ale#linter#Define('gitcommit', {
 \   'command_callback': 'ale_linters#gitcommit#gitlint#GetCommand',
 \   'callback': 'ale_linters#gitcommit#gitlint#Handle',
 \})
+

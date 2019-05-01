@@ -5,11 +5,16 @@
 call ale#Set('pyrex_cython_executable', 'cython')
 call ale#Set('pyrex_cython_options', '--warning-extra')
 
+function! ale_linters#pyrex#cython#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'pyrex_cython_executable')
+endfunction
+
 function! ale_linters#pyrex#cython#GetCommand(buffer) abort
     let l:local_dir = ale#Escape(fnamemodify(bufname(a:buffer), ':p:h'))
 
-    return '%e --working ' . l:local_dir . ' --include-dir ' . l:local_dir
-    \   . ale#Pad(ale#Var(a:buffer, 'pyrex_cython_options'))
+    return ale#Escape(ale_linters#pyrex#cython#GetExecutable(a:buffer))
+    \   . ' --working ' . l:local_dir . ' --include-dir ' . l:local_dir
+    \   . ' ' . ale#Var(a:buffer, 'pyrex_cython_options')
     \   . ' --output-file ' . g:ale#util#nul_file . ' %t'
 endfunction
 
@@ -32,7 +37,7 @@ endfunction
 call ale#linter#Define('pyrex', {
 \   'name': 'cython',
 \   'output_stream': 'stderr',
-\   'executable_callback': ale#VarFunc('pyrex_cython_executable'),
+\   'executable_callback': 'ale_linters#pyrex#cython#GetExecutable',
 \   'command_callback': 'ale_linters#pyrex#cython#GetCommand',
 \   'callback': 'ale_linters#pyrex#cython#Handle',
 \})

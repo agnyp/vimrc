@@ -1,7 +1,18 @@
 " Author: awlayton <alex@layton.in>
 " Description: mlint for MATLAB files
 
-call ale#Set('matlab_mlint_executable', 'mlint')
+let g:ale_matlab_mlint_executable =
+\   get(g:, 'ale_matlab_mlint_executable', 'mlint')
+
+function! ale_linters#matlab#mlint#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'matlab_mlint_executable')
+endfunction
+
+function! ale_linters#matlab#mlint#GetCommand(buffer) abort
+    let l:executable = ale_linters#matlab#mlint#GetExecutable(a:buffer)
+
+    return l:executable . ' -id %t'
+endfunction
 
 function! ale_linters#matlab#mlint#Handle(buffer, lines) abort
     " Matches patterns like the following:
@@ -37,8 +48,8 @@ endfunction
 
 call ale#linter#Define('matlab', {
 \   'name': 'mlint',
-\   'executable_callback': ale#VarFunc('matlab_mlint_executable'),
-\   'command': '%e -id %t',
+\   'executable_callback': 'ale_linters#matlab#mlint#GetExecutable',
+\   'command_callback': 'ale_linters#matlab#mlint#GetCommand',
 \   'output_stream': 'stderr',
 \   'callback': 'ale_linters#matlab#mlint#Handle',
 \})

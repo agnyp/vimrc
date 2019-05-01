@@ -76,10 +76,10 @@ function! go#tool#Imports() abort
   return imports
 endfunction
 
-function! go#tool#Info() abort
+function! go#tool#Info(auto) abort
   let l:mode = go#config#InfoMode()
   if l:mode == 'gocode'
-    call go#complete#Info()
+    call go#complete#Info(a:auto)
   elseif l:mode == 'guru'
     call go#guru#DescribeInfo()
   else

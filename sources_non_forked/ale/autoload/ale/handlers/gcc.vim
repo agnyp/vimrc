@@ -92,12 +92,9 @@ function! ale#handlers#gcc#HandleGCCFormat(buffer, lines) abort
         " the previous error parsed in output
         if l:match[4] is# 'note'
             if !empty(l:output)
-                if !has_key(l:output[-1], 'detail')
-                    let l:output[-1].detail = l:output[-1].text
-                endif
-
-                let l:output[-1].detail = l:output[-1].detail . "\n"
-                \   . s:RemoveUnicodeQuotes(l:match[0])
+                let l:output[-1]['detail'] =
+                \   get(l:output[-1], 'detail', '')
+                \   . s:RemoveUnicodeQuotes(l:match[0]) . "\n"
             endif
 
             continue

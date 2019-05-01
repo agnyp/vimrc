@@ -37,6 +37,10 @@ function! ale_linters#html#tidy#GetCommand(buffer) abort
     \)
 endfunction
 
+function! ale_linters#html#tidy#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'html_tidy_executable')
+endfunction
+
 function! ale_linters#html#tidy#Handle(buffer, lines) abort
     " Matches patterns lines like the following:
     " line 7 column 5 - Warning: missing </title> before </head>
@@ -63,7 +67,7 @@ endfunction
 
 call ale#linter#Define('html', {
 \   'name': 'tidy',
-\   'executable_callback': ale#VarFunc('html_tidy_executable'),
+\   'executable_callback': 'ale_linters#html#tidy#GetExecutable',
 \   'output_stream': 'stderr',
 \   'command_callback': 'ale_linters#html#tidy#GetCommand',
 \   'callback': 'ale_linters#html#tidy#Handle',

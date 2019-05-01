@@ -4,10 +4,16 @@
 call ale#Set('tcl_nagelfar_executable', 'nagelfar.tcl')
 call ale#Set('tcl_nagelfar_options', '')
 
+function! ale_linters#tcl#nagelfar#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'tcl_nagelfar_executable')
+endfunction
+
 function! ale_linters#tcl#nagelfar#GetCommand(buffer) abort
     let l:options = ale#Var(a:buffer, 'tcl_nagelfar_options')
 
-    return '%e' . ale#Pad(l:options) . ' %s'
+    return ale#Escape(ale_linters#tcl#nagelfar#GetExecutable(a:buffer))
+    \   . (!empty(l:options) ? ' ' . l:options : '')
+    \   . ' %s'
 endfunction
 
 function! ale_linters#tcl#nagelfar#Handle(buffer, lines) abort
@@ -33,7 +39,7 @@ endfunction
 call ale#linter#Define('tcl', {
 \   'name': 'nagelfar',
 \   'output_stream': 'stdout',
-\   'executable_callback': ale#VarFunc('tcl_nagelfar_executable'),
+\   'executable_callback': 'ale_linters#tcl#nagelfar#GetExecutable',
 \   'command_callback': 'ale_linters#tcl#nagelfar#GetCommand',
 \   'callback': 'ale_linters#tcl#nagelfar#Handle',
 \   'lint_file': 1,

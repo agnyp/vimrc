@@ -1,7 +1,16 @@
 " Author: Andrew Balmos - <andrew@balmos.org>
 " Description: lacheck for LaTeX files
 
-call ale#Set('tex_lacheck_executable', 'lacheck')
+let g:ale_tex_lacheck_executable =
+\   get(g:, 'ale_tex_lacheck_executable', 'lacheck')
+
+function! ale_linters#tex#lacheck#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'tex_lacheck_executable')
+endfunction
+
+function! ale_linters#tex#lacheck#GetCommand(buffer) abort
+    return ale#Var(a:buffer, 'tex_lacheck_executable') . ' %t'
+endfunction
 
 function! ale_linters#tex#lacheck#Handle(buffer, lines) abort
     " Mattes lines like:
@@ -32,7 +41,7 @@ endfunction
 
 call ale#linter#Define('tex', {
 \   'name': 'lacheck',
-\   'executable_callback': ale#VarFunc('tex_lacheck_executable'),
-\   'command': '%e %t',
+\   'executable_callback': 'ale_linters#tex#lacheck#GetExecutable',
+\   'command_callback': 'ale_linters#tex#lacheck#GetCommand',
 \   'callback': 'ale_linters#tex#lacheck#Handle'
 \})

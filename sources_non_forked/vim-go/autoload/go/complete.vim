@@ -81,15 +81,15 @@ function! go#complete#GetInfo() abort
   return s:sync_info(0)
 endfunction
 
-function! go#complete#Info() abort
+function! go#complete#Info(auto) abort
   if go#util#has_job(1)
-    return s:async_info(1)
+    return s:async_info(a:auto)
   else
-    return s:sync_info(1)
+    return s:sync_info(a:auto)
   endif
 endfunction
 
-function! s:async_info(echo)
+function! s:async_info(auto)
   if exists("s:async_info_job")
     call job_stop(s:async_info_job)
     unlet s:async_info_job
@@ -100,7 +100,7 @@ function! s:async_info(echo)
         \ 'exit_status': 0,
         \ 'closed': 0,
         \ 'messages': [],
-        \ 'echo': a:echo
+        \ 'auto': a:auto
       \ }
 
   function! s:callback(chan, msg) dict
@@ -132,8 +132,8 @@ function! s:async_info(echo)
       return
     endif
 
-    let result = s:info_filter(self.echo, join(self.messages, "\n"))
-    call s:info_complete(self.echo, result)
+    let result = s:info_filter(self.auto, join(self.messages, "\n"))
+    call s:info_complete(self.auto, result)
   endfunction
 
   " add 1 to the offset, so that the position at the cursor will be included
@@ -171,7 +171,9 @@ function! s:gocodeFile()
   return file
 endfunction
 
-function! s:sync_info(echo)
+function! s:sync_info(auto)
+  " auto is true if we were called by g:go_auto_type_info's autocmd
+
   " add 1 to the offset, so that the position at the cursor will be included
   " in gocode's search
   let offset = go#util#OffsetCursor()+1
@@ -180,11 +182,11 @@ function! s:sync_info(echo)
         \ [expand('%:p'), offset],
         \ go#util#GetLines())
 
-  let result = s:info_filter(a:echo, result)
-  return s:info_complete(a:echo, result)
+  let result = s:info_filter(a:auto, result)
+  call s:info_complete(a:auto, result)
 endfunction
 
-function! s:info_filter(echo, result) abort
+function! s:info_filter(auto, result) abort
   if empty(a:result)
     return ""
   endif
@@ -198,7 +200,7 @@ function! s:info_filter(echo, result) abort
   if len(l:candidates) == 1
     " When gocode panics in vim mode, it returns
     "     [0, [{'word': 'PANIC', 'abbr': 'PANIC PANIC PANIC', 'info': 'PANIC PANIC PANIC'}]]
-    if a:echo && l:candidates[0].info ==# "PANIC PANIC PANIC"
+    if a:auto && l:candidates[0].info ==# "PANIC PANIC PANIC"
       return ""
     endif
 
@@ -218,12 +220,10 @@ function! s:info_filter(echo, result) abort
   return l:filtered[0].info
 endfunction
 
-function! s:info_complete(echo, result) abort
-  if a:echo && !empty(a:result)
+function! s:info_complete(auto, result) abort
+  if !empty(a:result)
     echo "vim-go: " | echohl Function | echon a:result | echohl None
   endif
-
-  return a:result
 endfunction
 
 function! s:trim_bracket(val) abort

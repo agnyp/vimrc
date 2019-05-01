@@ -157,7 +157,7 @@ let s:default_registry = {
 \   },
 \   'hackfmt': {
 \       'function': 'ale#fixers#hackfmt#Fix',
-\       'suggested_filetypes': ['hack'],
+\       'suggested_filetypes': ['php'],
 \       'description': 'Fix Hack files with hackfmt.',
 \   },
 \   'hfmt': {
@@ -169,16 +169,6 @@ let s:default_registry = {
 \       'function': 'ale#fixers#brittany#Fix',
 \       'suggested_filetypes': ['haskell'],
 \       'description': 'Fix Haskell files with brittany.',
-\   },
-\   'hlint': {
-\       'function': 'ale#fixers#hlint#Fix',
-\       'suggested_filetypes': ['haskell'],
-\       'description': 'Refactor Haskell files with hlint.',
-\   },
-\   'stylish-haskell': {
-\       'function': 'ale#fixers#stylish_haskell#Fix',
-\       'suggested_filetypes': ['haskell'],
-\       'description': 'Refactor Haskell files with stylish-haskell.',
 \   },
 \   'refmt': {
 \       'function': 'ale#fixers#refmt#Fix',
@@ -253,7 +243,7 @@ endfunction
 " (name, func, filetypes, desc, aliases)
 function! ale#fix#registry#Add(name, func, filetypes, desc, ...) abort
     " This command will throw from the sandbox.
-    let &l:equalprg=&l:equalprg
+    let &equalprg=&equalprg
 
     if type(a:name) isnot v:t_string
         throw '''name'' must be a String'

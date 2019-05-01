@@ -24,7 +24,6 @@ function! ale#python#FindProjectRootIni(buffer) abort
         \|| filereadable(l:path . '/mypy.ini')
         \|| filereadable(l:path . '/pycodestyle.cfg')
         \|| filereadable(l:path . '/flake8.cfg')
-        \|| filereadable(l:path . '/.flake8rc')
         \|| filereadable(l:path . '/Pipfile')
         \|| filereadable(l:path . '/Pipfile.lock')
             return l:path

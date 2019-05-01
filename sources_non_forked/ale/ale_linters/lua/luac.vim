@@ -3,6 +3,15 @@
 
 call ale#Set('lua_luac_executable', 'luac')
 
+function! ale_linters#lua#luac#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'lua_luac_executable')
+endfunction
+
+function! ale_linters#lua#luac#GetCommand(buffer) abort
+    let l:executable = ale_linters#lua#luac#GetExecutable(a:buffer)
+    return ale#Escape(l:executable) . ' -p - '
+endfunction
+
 function! ale_linters#lua#luac#Handle(buffer, lines) abort
     " Matches patterns line the following:
     "
@@ -24,8 +33,8 @@ endfunction
 
 call ale#linter#Define('lua', {
 \   'name': 'luac',
-\   'executable_callback': ale#VarFunc('lua_luac_executable'),
-\   'command': '%e -p -',
+\   'executable_callback': 'ale_linters#lua#luac#GetExecutable',
+\   'command_callback': 'ale_linters#lua#luac#GetCommand',
 \   'output_stream': 'stderr',
 \   'callback': 'ale_linters#lua#luac#Handle',
 \})

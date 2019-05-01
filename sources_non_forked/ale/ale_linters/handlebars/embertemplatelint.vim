@@ -4,6 +4,17 @@
 call ale#Set('handlebars_embertemplatelint_executable', 'ember-template-lint')
 call ale#Set('handlebars_embertemplatelint_use_global', get(g:, 'ale_use_global_executables', 0))
 
+function! ale_linters#handlebars#embertemplatelint#GetExecutable(buffer) abort
+    return ale#node#FindExecutable(a:buffer, 'handlebars_embertemplatelint', [
+    \   'node_modules/.bin/ember-template-lint',
+    \])
+endfunction
+
+function! ale_linters#handlebars#embertemplatelint#GetCommand(buffer) abort
+    return ale_linters#handlebars#embertemplatelint#GetExecutable(a:buffer)
+    \   . ' --json %t'
+endfunction
+
 function! ale_linters#handlebars#embertemplatelint#Handle(buffer, lines) abort
     let l:output = []
     let l:json = ale#util#FuzzyJSONDecode(a:lines, {})
@@ -31,9 +42,7 @@ endfunction
 
 call ale#linter#Define('handlebars', {
 \   'name': 'ember-template-lint',
-\   'executable_callback': ale#node#FindExecutableFunc('handlebars_embertemplatelint', [
-\       'node_modules/.bin/ember-template-lint',
-\   ]),
-\   'command': '%e --json %t',
+\   'executable_callback': 'ale_linters#handlebars#embertemplatelint#GetExecutable',
+\   'command_callback': 'ale_linters#handlebars#embertemplatelint#GetCommand',
 \   'callback': 'ale_linters#handlebars#embertemplatelint#Handle',
 \})
