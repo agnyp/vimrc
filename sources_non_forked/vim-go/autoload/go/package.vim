@@ -33,7 +33,7 @@ function! go#package#Paths() abort
 
   if !exists("s:goroot")
     if executable('go')
-      let s:goroot = go#util#env("goroot")
+      let s:goroot = go#util#goroot()
       if go#util#ShellError() != 0
         echomsg '''go env GOROOT'' failed'
       endif
@@ -54,24 +54,28 @@ function! go#package#Paths() abort
   return dirs
 endfunction
 
-" ImportPath returns the import path in the current directory it was executed
-function! go#package#ImportPath() abort
-  let out = go#tool#ExecuteInDir("go list")
-  if go#util#ShellError() != 0
+function! go#package#ImportPath(arg) abort
+  let path = fnamemodify(resolve(a:arg), ':p')
+  let dirs = go#package#Paths()
+
+  for dir in dirs
+    if len(dir) && matchstr(escape(path, '\/'), escape(dir, '\/')) == 0
+      let workspace = dir
+    endif
+  endfor
+
+  if !exists('workspace')
     return -1
   endif
 
-  let import_path = split(out, '\n')[0]
-
-  " go list returns '_CURRENTDIRECTORY' if the directory is not inside GOPATH.
-  " Check it and retun an error if that is the case
-  if import_path[0] ==# '_'
-    return -1
+  if go#util#IsWin()
+    let srcdir = substitute(workspace . '\src\', '//', '/', '')
+    return path[len(srcdir):]
+  else
+    let srcdir = substitute(workspace . '/src/', '//', '/', '')
+    return substitute(path, srcdir, '', '')
   endif
-
-  return import_path
 endfunction
-
 
 function! go#package#FromPath(arg) abort
   let path = fnamemodify(resolve(a:arg), ':p')

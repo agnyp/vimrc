@@ -103,7 +103,7 @@ function! go#complete#GetInfo() abort
     return ""
   endif
 
-  " only one candidate is found
+  " only one candiate is found
   if len(out) == 2
     return split(out[1], ',,')[0]
   endif

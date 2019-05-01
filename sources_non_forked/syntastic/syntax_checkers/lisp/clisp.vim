@@ -19,13 +19,13 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! SyntaxCheckers_lisp_clisp_GetLocList() dict
-    let buf = bufnr('')
     let tmpdir = syntastic#util#tmpdir()
+    let out = tmpdir !=# '.' ? ('-o ' . syntastic#util#shescape(tmpdir . syntastic#util#Slash() . 'syntastic_' . getpid())) : ''
 
     let makeprg = self.makeprgBuild({
         \ 'args_after': '-q',
         \ 'fname_before': '-c',
-        \ 'post_args_after': ['-o', tmpdir] })
+        \ 'post_args_after': out })
 
     let errorformat  =
         \ '%-G;%.%#,' .
@@ -40,7 +40,7 @@ function! SyntaxCheckers_lisp_clisp_GetLocList() dict
     let loclist = SyntasticMake({
         \ 'makeprg': makeprg,
         \ 'errorformat': errorformat,
-        \ 'defaults': {'bufnr': buf} })
+        \ 'defaults': {'bufnr': bufnr('')} })
 
     call syntastic#util#rmrf(tmpdir)
 

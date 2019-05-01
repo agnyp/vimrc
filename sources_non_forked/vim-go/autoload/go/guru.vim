@@ -16,7 +16,8 @@ function! s:guru_cmd(args) range abort
   let selected = a:args.selected
 
   let result = {}
-  let pkg = go#package#ImportPath()
+  let dirname = expand('%:p:h')
+  let pkg = go#package#ImportPath(dirname)
 
   " this is important, check it!
   if pkg == -1 && needs_scope

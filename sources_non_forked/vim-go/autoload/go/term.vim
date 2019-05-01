@@ -23,7 +23,6 @@ function! go#term#newmode(bang, cmd, mode) abort
   let $GOPATH = go#path#Detect()
 
   " execute go build in the files directory
-  let l:winnr = winnr()
   let cd = exists('*haslocaldir') && haslocaldir() ? 'lcd ' : 'cd '
   let dir = getcwd()
 
@@ -47,10 +46,6 @@ function! go#term#newmode(bang, cmd, mode) abort
         \ }
 
   let id = termopen(a:cmd, job)
-
-  if l:winnr !=# winnr()
-    exe l:winnr . "wincmd w"
-  endif
 
   execute cd . fnameescape(dir)
 
