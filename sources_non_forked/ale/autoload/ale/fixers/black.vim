@@ -4,28 +4,22 @@
 call ale#Set('python_black_executable', 'black')
 call ale#Set('python_black_use_global', get(g:, 'ale_use_global_executables', 0))
 call ale#Set('python_black_options', '')
-call ale#Set('python_black_auto_pipenv', 0)
-
-function! ale#fixers#black#GetExecutable(buffer) abort
-    if (ale#Var(a:buffer, 'python_auto_pipenv') || ale#Var(a:buffer, 'python_black_auto_pipenv'))
-    \ && ale#python#PipenvPresent(a:buffer)
-        return 'pipenv'
-    endif
-
-    return ale#python#FindExecutable(a:buffer, 'python_black', ['black'])
-endfunction
 
 function! ale#fixers#black#Fix(buffer) abort
-    let l:executable = ale#fixers#black#GetExecutable(a:buffer)
+    let l:executable = ale#python#FindExecutable(
+    \   a:buffer,
+    \   'python_black',
+    \   ['black'],
+    \)
 
-    let l:exec_args = l:executable =~? 'pipenv$'
-    \   ? ' run black'
-    \   : ''
+    if !executable(l:executable)
+        return 0
+    endif
 
     let l:options = ale#Var(a:buffer, 'python_black_options')
 
     return {
-    \   'command': ale#Escape(l:executable) . l:exec_args
+    \   'command': ale#Escape(l:executable)
     \       . (!empty(l:options) ? ' ' . l:options : '')
     \       . ' -',
     \}

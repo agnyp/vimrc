@@ -30,21 +30,6 @@ function! s:groutineID() abort
 endfunction
 
 function! s:complete(job, exit_status, data) abort
-  let l:gotready = get(s:state, 'ready', 0)
-  " copy messages to a:data _only_ when dlv exited non-zero and it was never
-  " detected as ready (e.g. there was a compiler error).
-  if a:exit_status > 0 && !l:gotready
-      " copy messages to data so that vim-go's usual handling of errors from
-      " async jobs will occur.
-      call extend(a:data, s:state['message'])
-  endif
-
-  " return early instead of clearing any variables when the current job is not
-  " a:job
-  if has_key(s:state, 'job') && s:state['job'] != a:job
-    return
-  endif
-
   if has_key(s:state, 'job')
     call remove(s:state, 'job')
   endif
@@ -53,11 +38,10 @@ function! s:complete(job, exit_status, data) abort
     call remove(s:state, 'ready')
   endif
 
-  if has_key(s:state, 'ch')
-    call remove(s:state, 'ch')
-  endif
-
   call s:clearState()
+  if a:exit_status > 0
+    call go#util#EchoError(s:state['message'])
+  endif
 endfunction
 
 function! s:logger(prefix, ch, msg) abort
@@ -233,8 +217,8 @@ endfunction
 function! s:stop() abort
   let l:res = s:call_jsonrpc('RPCServer.Detach', {'kill': v:true})
 
+  call s:clearState()
   if has_key(s:state, 'job')
-    call go#job#Wait(s:state['job'])
     call remove(s:state, 'job')
   endif
 
@@ -246,7 +230,9 @@ function! s:stop() abort
     call remove(s:state, 'ch')
   endif
 
-  call s:clearState()
+  if has_key( s:state, 'data')
+    call remove(s:state, 'data')
+  endif
 endfunction
 
 function! go#debug#Stop() abort
@@ -487,7 +473,7 @@ function! s:start_cb(res) abort
   exe bufwinnr(oldbuf) 'wincmd w'
 
   augroup vim-go-debug
-    autocmd! * <buffer>
+    autocmd!
     autocmd FileType go nmap <buffer> <F5>   <Plug>(go-debug-continue)
     autocmd FileType go nmap <buffer> <F6>   <Plug>(go-debug-print)
     autocmd FileType go nmap <buffer> <F9>   <Plug>(go-debug-breakpoint)
@@ -503,6 +489,7 @@ function! s:err_cb(ch, msg) abort
     return
   endif
 
+  call go#util#EchoError(a:msg)
   let s:state['message'] += [a:msg]
 endfunction
 
@@ -512,6 +499,7 @@ function! s:out_cb(ch, msg) abort
     return
   endif
 
+  call go#util#EchoProgress(a:msg)
   let s:state['message'] += [a:msg]
 
   if stridx(a:msg, go#config#DebugAddress()) != -1
@@ -584,7 +572,7 @@ function! go#debug#Start(is_test, ...) abort
 
   " It's already running.
   if has_key(s:state, 'job')
-    return s:state['job']
+    return
   endif
 
   let s:start_args = a:000
@@ -646,7 +634,7 @@ function! go#debug#Start(is_test, ...) abort
 
     let s:state['message'] = []
     let l:opts = {
-          \ 'for': 'GoDebug',
+          \ 'for': '_',
           \ 'statustype': 'debug',
           \ 'complete': function('s:complete'),
           \ }
@@ -659,8 +647,6 @@ function! go#debug#Start(is_test, ...) abort
   catch
     call go#util#EchoError(v:exception)
   endtry
-
-  return s:state['job']
 endfunction
 
 " Translate a reflect kind constant to a human string.
@@ -886,7 +872,7 @@ function! go#debug#Restart() abort
   call go#cmd#autowrite()
 
   try
-    call s:stop()
+    call go#job#Stop(s:state['job'])
 
     let l:breaks = s:state['breakpoint']
     let s:state = {
