@@ -177,6 +177,9 @@ function! go#cmd#Install(bang, ...) abort
     " expand all wildcards(i.e: '%' to the current file name)
     let goargs = map(copy(a:000), "expand(v:val)")
 
+    " escape all shell arguments before we pass it to make
+    let goargs = go#util#Shelllist(goargs, 1)
+
     if get(g:, 'go_echo_command_info', 1)
       call go#util#EchoProgress("installing dispatched ...")
     endif
@@ -218,7 +221,7 @@ function! go#cmd#Install(bang, ...) abort
   if !empty(errors) && !a:bang
     call go#list#JumpToFirst(l:listtype)
   else
-    call go#util#EchoSuccess("installed to ". go#path#Detect())
+    call go#util#EchoSuccess("installed to ". $GOPATH)
   endif
 
   let $GOPATH = old_gopath
@@ -403,6 +406,7 @@ function! go#cmd#Generate(bang, ...) abort
   let &makeprg = default_makeprg
   let $GOPATH = old_gopath
 endfunction
+
 
 " ---------------------
 " | Vim job callbacks |

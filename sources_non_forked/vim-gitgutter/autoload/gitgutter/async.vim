@@ -59,7 +59,11 @@ function! gitgutter#async#execute(cmd) abort
     if has('unix')
       let command = ["sh", "-c", a:cmd]
     elseif has('win32')
-      let command = "cmd.exe /c ".a:cmd
+      " Help docs recommend {command} be a string on Windows.  But I think
+      " they also say that will run the command directly, which I believe would
+      " mean the redirection and pipe stuff wouldn't work.
+      " let command = "cmd.exe /c ".a:cmd
+      let command = ["cmd.exe", "/c", a:cmd]
     else
       throw 'unknown os'
     endif
@@ -75,7 +79,7 @@ function! gitgutter#async#execute(cmd) abort
 endfunction
 
 
-function! gitgutter#async#handle_diff_job_nvim(job_id, data, event) dict abort
+function! gitgutter#async#handle_diff_job_nvim(job_id, data, event) abort
   call gitgutter#debug#log('job_id: '.a:job_id.', event: '.a:event.', buffer: '.self.buffer)
 
   let job_bufnr = self.buffer

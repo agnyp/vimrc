@@ -1,53 +1,47 @@
+let s:hunks = []
+
 function! gitgutter#hunk#set_hunks(hunks) abort
-  call gitgutter#utility#setbufvar(gitgutter#utility#bufnr(), 'hunks', a:hunks)
-  call s:reset_summary()
+  let s:hunks = a:hunks
 endfunction
 
 function! gitgutter#hunk#hunks() abort
-  return gitgutter#utility#getbufvar(gitgutter#utility#bufnr(), 'hunks', [])
+  return s:hunks
+endfunction
+
+function! gitgutter#hunk#summary(bufnr) abort
+  return get(getbufvar(a:bufnr,''), 'gitgutter_summary', [0,0,0])
 endfunction
 
 function! gitgutter#hunk#reset() abort
-  call gitgutter#utility#setbufvar(gitgutter#utility#bufnr(), 'hunks', [])
-  call s:reset_summary()
-endfunction
-
-
-function! gitgutter#hunk#summary(bufnr) abort
-  return gitgutter#utility#getbufvar(a:bufnr, 'summary', [0,0,0])
-endfunction
-
-function! s:reset_summary() abort
-  call gitgutter#utility#setbufvar(gitgutter#utility#bufnr(), 'summary', [0,0,0])
+  call setbufvar(gitgutter#utility#bufnr(), 'gitgutter_summary', [0,0,0])
 endfunction
 
 function! gitgutter#hunk#increment_lines_added(count) abort
   let bufnr = gitgutter#utility#bufnr()
   let summary = gitgutter#hunk#summary(bufnr)
   let summary[0] += a:count
-  call gitgutter#utility#setbufvar(bufnr, 'summary', summary)
+  call setbufvar(bufnr, 'gitgutter_summary', summary)
 endfunction
 
 function! gitgutter#hunk#increment_lines_modified(count) abort
   let bufnr = gitgutter#utility#bufnr()
   let summary = gitgutter#hunk#summary(bufnr)
   let summary[1] += a:count
-  call gitgutter#utility#setbufvar(bufnr, 'summary', summary)
+  call setbufvar(bufnr, 'gitgutter_summary', summary)
 endfunction
 
 function! gitgutter#hunk#increment_lines_removed(count) abort
   let bufnr = gitgutter#utility#bufnr()
   let summary = gitgutter#hunk#summary(bufnr)
   let summary[2] += a:count
-  call gitgutter#utility#setbufvar(bufnr, 'summary', summary)
+  call setbufvar(bufnr, 'gitgutter_summary', summary)
 endfunction
-
 
 function! gitgutter#hunk#next_hunk(count) abort
   if gitgutter#utility#is_active()
     let current_line = line('.')
     let hunk_count = 0
-    for hunk in gitgutter#hunk#hunks()
+    for hunk in s:hunks
       if hunk[2] > current_line
         let hunk_count += 1
         if hunk_count == a:count
@@ -64,7 +58,7 @@ function! gitgutter#hunk#prev_hunk(count) abort
   if gitgutter#utility#is_active()
     let current_line = line('.')
     let hunk_count = 0
-    for hunk in reverse(copy(gitgutter#hunk#hunks()))
+    for hunk in reverse(copy(s:hunks))
       if hunk[2] < current_line
         let hunk_count += 1
         if hunk_count == a:count
@@ -83,7 +77,7 @@ endfunction
 function! gitgutter#hunk#current_hunk() abort
   let current_hunk = []
 
-  for hunk in gitgutter#hunk#hunks()
+  for hunk in s:hunks
     if gitgutter#hunk#cursor_in_hunk(hunk)
       let current_hunk = hunk
       break
@@ -111,7 +105,7 @@ endfunction
 " be if any changes above it in the file didn't exist.
 function! gitgutter#hunk#line_adjustment_for_current_hunk() abort
   let adj = 0
-  for hunk in gitgutter#hunk#hunks()
+  for hunk in s:hunks
     if gitgutter#hunk#cursor_in_hunk(hunk)
       break
     else
