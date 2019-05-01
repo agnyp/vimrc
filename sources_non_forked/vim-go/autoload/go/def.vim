@@ -129,6 +129,8 @@ function! s:jump_to_declaration(out, mode)
       split
     elseif a:mode == "vsplit"
       vsplit
+    elseif &modified
+      split
     endif
 
     " open the file and jump to line and column

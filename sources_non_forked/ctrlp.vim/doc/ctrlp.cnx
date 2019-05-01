@@ -885,8 +885,7 @@ MRU mode options:~
     在匹配窗口和提示符面板之间切换焦点。
 
   <esc>,
-  <c-c>,
-  <c-g>
+  <c-c>
     退出CtrlP。
 
 移动:~

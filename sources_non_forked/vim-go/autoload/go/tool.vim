@@ -121,9 +121,7 @@ endfunction
 
 function! go#tool#ExecuteInDir(cmd) abort
   let old_gopath = $GOPATH
-  let old_goroot = $GOROOT
   let $GOPATH = go#path#Detect()
-  let $GOROOT = go#util#env("goroot")
 
   let cd = exists('*haslocaldir') && haslocaldir() ? 'lcd ' : 'cd '
   let dir = getcwd()
@@ -134,7 +132,6 @@ function! go#tool#ExecuteInDir(cmd) abort
     execute cd . fnameescape(dir)
   endtry
 
-  let $GOROOT = old_goroot
   let $GOPATH = old_gopath
   return out
 endfunction

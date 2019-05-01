@@ -186,10 +186,6 @@ function! s:NERDTree.previousBuf()
     return self._previousBuf
 endfunction
 
-function! s:NERDTree.setPreviousBuf(bnum)
-    let self._previousBuf = a:bnum
-endfunction
-
 "FUNCTION: s:NERDTree.render() {{{1
 "A convenience function - since this is called often
 function! s:NERDTree.render()
