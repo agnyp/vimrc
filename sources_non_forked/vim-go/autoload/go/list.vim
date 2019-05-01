@@ -18,7 +18,14 @@ function! go#list#Window(listtype, ...) abort
   " location list increases/decreases, cwindow will not resize when a new
   " updated height is passed. lopen in the other hand resizes the screen.
   if !a:0 || a:1 == 0
-    call go#list#Close(a:listtype)
+    let autoclose_window = get(g:, 'go_list_autoclose', 1)
+    if autoclose_window
+      if a:listtype == "locationlist"
+        lclose
+      else
+        cclose
+      endif
+    endif
     return
   endif
 
@@ -72,7 +79,13 @@ function! go#list#ParseFormat(listtype, errformat, items, title) abort
   " parse and populate the location list
   let &errorformat = a:errformat
   try
-    call go#list#Parse(a:listtype, a:items, a:title)
+    if a:listtype == "locationlist"
+      lgetexpr a:items
+      if has("patch-7.4.2200") | call setloclist(0, [], 'a', {'title': a:title}) | endif
+    else
+      cgetexpr a:items
+      if has("patch-7.4.2200") | call setqflist([], 'a', {'title': a:title}) | endif
+    endif
   finally
     "restore back
     let &errorformat = old_errorformat
@@ -81,13 +94,11 @@ endfunction
 
 " Parse parses the given items based on the global errorformat and
 " populates the list.
-function! go#list#Parse(listtype, items, title) abort
+function! go#list#Parse(listtype, items) abort
   if a:listtype == "locationlist"
     lgetexpr a:items
-    if has("patch-7.4.2200") | call setloclist(0, [], 'a', {'title': a:title}) | endif
   else
     cgetexpr a:items
-    if has("patch-7.4.2200") | call setqflist([], 'a', {'title': a:title}) | endif
   endif
 endfunction
 
@@ -100,28 +111,12 @@ function! go#list#JumpToFirst(listtype) abort
   endif
 endfunction
 
-" Clean cleans and closes the location list 
+" Clean cleans the location list
 function! go#list#Clean(listtype) abort
   if a:listtype == "locationlist"
     lex []
   else
     cex []
-  endif
-
-  call go#list#Close(a:listtype)
-endfunction
-
-" Close closes the location list
-function! go#list#Close(listtype) abort
-  let autoclose_window = get(g:, 'go_list_autoclose', 1)
-  if !autoclose_window
-    return
-  endif
-
-  if a:listtype == "locationlist"
-    lclose
-  else
-    cclose
   endif
 endfunction
 

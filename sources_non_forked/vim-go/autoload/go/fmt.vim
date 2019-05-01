@@ -148,6 +148,7 @@ function! go#fmt#update_file(source, target)
 
   if has_key(l:list_title, "title") && l:list_title['title'] == "Format"
     call go#list#Clean(l:listtype)
+    call go#list#Window(l:listtype)
   endif
 endfunction
 

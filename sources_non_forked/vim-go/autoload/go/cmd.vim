@@ -17,7 +17,7 @@ function! go#cmd#Build(bang, ...) abort
   let args =
         \ ["build"] +
         \ map(copy(a:000), "expand(v:val)") +
-        \ [".", "errors"]
+        \ ["-i", ".", "errors"]
 
   " Vim async.
   if go#util#has_job()

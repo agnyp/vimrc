@@ -62,7 +62,6 @@ function! s:spawn(bang, desc, for, args) abort
         \ 'status_dir' : status_dir,
         \ 'started_at' : started_at,
         \ 'for' : a:for,
-        \ 'errorformat': &errorformat,
         \ }
 
   " execute go build in the files directory
@@ -126,6 +125,7 @@ function! s:on_exit(job_id, exit_status, event) dict abort
   let l:listtype = go#list#Type(self.for)
   if a:exit_status == 0
     call go#list#Clean(l:listtype)
+    call go#list#Window(l:listtype)
 
     let self.state = "SUCCESS"
 
@@ -143,9 +143,8 @@ function! s:on_exit(job_id, exit_status, event) dict abort
     call go#util#EchoError("[" . self.status_type . "] FAILED")
   endif
 
-  " parse the errors relative to self.jobdir
-  call go#list#ParseFormat(l:listtype, self.errorformat, std_combined, self.for)
-  let errors = go#list#Get(l:listtype)
+  let errors = go#tool#ParseErrors(std_combined)
+  let errors = go#tool#FilterValids(errors)
 
   execute cd . fnameescape(dir)
 
@@ -157,6 +156,7 @@ function! s:on_exit(job_id, exit_status, event) dict abort
 
   " if we are still in the same windows show the list
   if self.winnr == winnr()
+    call go#list#Populate(l:listtype, errors, self.desc)
     call go#list#Window(l:listtype, len(errors))
     if !empty(errors) && !self.bang
       call go#list#JumpToFirst(l:listtype)
