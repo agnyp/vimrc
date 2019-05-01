@@ -1,3 +1,8 @@
+if !exists("g:go_play_open_browser")
+  let g:go_play_open_browser = 1
+endif
+
+
 function! go#play#Share(count, line1, line2) abort
   if !executable('curl')
     echohl ErrorMsg | echomsg "vim-go: require 'curl' command" | echohl None
@@ -8,16 +13,15 @@ function! go#play#Share(count, line1, line2) abort
   let share_file = tempname()
   call writefile(split(content, "\n"), share_file, "b")
 
-  let l:cmd = ['curl', '-s', '-X', 'POST', 'https://play.golang.org/share',
-        \ '--data-binary', '@' . l:share_file]
-  let [l:snippet_id, l:err] = go#util#Exec(l:cmd)
+  let command = "curl -s -X POST https://play.golang.org/share --data-binary '@".share_file."'"
+  let snippet_id = go#util#System(command)
 
   " we can remove the temp file because it's now posted.
   call delete(share_file)
 
-  if l:err != 0
-    echom 'A error has occurred. Run this command to see what the problem is:'
-    echom go#util#Shelljoin(l:cmd)
+  if go#util#ShellError() != 0
+    echo 'A error has occurred. Run this command to see what the problem is:'
+    echo command
     return
   endif
 
@@ -30,7 +34,7 @@ function! go#play#Share(count, line1, line2) abort
     let @+ = url
   endif
 
-  if go#config#PlayOpenBrowser()
+  if g:go_play_open_browser != 0
     call go#tool#OpenBrowser(url)
   endif
 

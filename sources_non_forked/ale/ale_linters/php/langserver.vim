@@ -2,7 +2,7 @@
 " Description: PHP Language server integration for ALE
 
 call ale#Set('php_langserver_executable', 'php-language-server.php')
-call ale#Set('php_langserver_use_global', get(g:, 'ale_use_global_executables', 0))
+call ale#Set('php_langserver_use_global', 0)
 
 function! ale_linters#php#langserver#GetExecutable(buffer) abort
     return ale#node#FindExecutable(a:buffer, 'php_langserver', [
@@ -12,6 +12,10 @@ endfunction
 
 function! ale_linters#php#langserver#GetCommand(buffer) abort
     return 'php ' . ale#Escape(ale_linters#php#langserver#GetExecutable(a:buffer))
+endfunction
+
+function! ale_linters#php#langserver#GetLanguage(buffer) abort
+    return 'php'
 endfunction
 
 function! ale_linters#php#langserver#GetProjectRoot(buffer) abort
@@ -25,6 +29,6 @@ call ale#linter#Define('php', {
 \   'lsp': 'stdio',
 \   'executable_callback': 'ale_linters#php#langserver#GetExecutable',
 \   'command_callback': 'ale_linters#php#langserver#GetCommand',
-\   'language': 'php',
+\   'language_callback': 'ale_linters#php#langserver#GetLanguage',
 \   'project_root_callback': 'ale_linters#php#langserver#GetProjectRoot',
 \})

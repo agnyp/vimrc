@@ -58,34 +58,35 @@ function! s:source(mode,...) abort
   let s:current_dir = expand('%:p:h')
   let ret_decls = []
 
-  let l:cmd = ['motion',
-        \ '-format', 'vim',
-        \ '-mode', 'decls',
-        \ '-include', go#config#DeclsIncludes(),
-        \ ]
+  let bin_path = go#path#CheckBinPath('motion')
+  if empty(bin_path)
+    return
+  endif
+  let command = printf("%s -format vim -mode decls", bin_path)
+  let command .= " -include ".  get(g:, "go_decls_includes", "func,type")
 
   call go#cmd#autowrite()
 
   if a:mode == 0
     " current file mode
-    let l:fname = expand("%:p")
+    let fname = expand("%:p")
     if a:0 && !empty(a:1)
-      let l:fname = a:1
+      let fname = a:1
     endif
 
-    let cmd += ['-file', l:fname]
+    let command .= printf(" -file %s", shellescape(fname))
   else
     " all functions mode
     if a:0 && !empty(a:1)
       let s:current_dir = a:1
     endif
 
-    let l:cmd += ['-dir', s:current_dir]
+    let command .= printf(" -dir %s", shellescape(s:current_dir))
   endif
 
-  let [l:out, l:err] = go#util#Exec(l:cmd)
-  if l:err
-    call go#util#EchoError(l:out)
+  let out = go#util#System(command)
+  if go#util#ShellError() != 0
+    call go#util#EchoError(out)
     return
   endif
 

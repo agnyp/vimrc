@@ -10,13 +10,9 @@ endfunction
 
 function! ale_linters#markdown#mdl#GetCommand(buffer) abort
     let l:executable = ale_linters#markdown#mdl#GetExecutable(a:buffer)
-    let l:exec_args = l:executable =~? 'bundle$'
-    \   ? ' exec mdl'
-    \   : ''
-
     let l:options = ale#Var(a:buffer, 'markdown_mdl_options')
 
-    return ale#Escape(l:executable) . l:exec_args
+    return ale#Escape(l:executable)
     \   . (!empty(l:options) ? ' ' . l:options : '')
 endfunction
 

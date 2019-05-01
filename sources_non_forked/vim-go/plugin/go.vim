@@ -11,7 +11,7 @@ let g:go_loaded_install = 1
 " Version 7.4.1689 was chosen because that's what the most recent Ubuntu LTS
 " release (16.04) uses.
 if
-      \ go#config#VersionWarning() != 0 &&
+      \ get(g:, 'go_version_warning', 1) != 0 &&
       \ (v:version < 704 || (v:version == 704 && !has('patch1689')))
       \ && !has('nvim')
   echohl Error
@@ -34,7 +34,7 @@ let s:packages = {
       \ 'dlv':           ['github.com/derekparker/delve/cmd/dlv'],
       \ 'errcheck':      ['github.com/kisielk/errcheck'],
       \ 'fillstruct':    ['github.com/davidrjenni/reftools/cmd/fillstruct'],
-      \ 'gocode':        ['github.com/nsf/gocode', {'windows': ['-ldflags', '-H=windowsgui']}],
+      \ 'gocode':        ['github.com/nsf/gocode', {'windows': '-ldflags -H=windowsgui'}],
       \ 'godef':         ['github.com/rogpeppe/godef'],
       \ 'gogetdoc':      ['github.com/zmb3/gogetdoc'],
       \ 'goimports':     ['golang.org/x/tools/cmd/goimports'],
@@ -97,9 +97,16 @@ function! s:GoInstallBinaries(updateBinaries, ...)
     set noshellslash
   endif
 
-  let l:cmd = ['go', 'get', '-v']
+  let cmd = "go get -v "
   if get(g:, "go_get_update", 1) != 0
-    let l:cmd += ['-u']
+    let cmd .= "-u "
+  endif
+
+  let s:go_version = matchstr(go#util#System("go version"), '\d.\d.\d')
+
+  " https://github.com/golang/go/issues/10791
+  if s:go_version > "1.4.0" && s:go_version < "1.5.0"
+    let cmd .= "-f "
   endif
 
   " Filter packages from arguments (if any).
@@ -124,11 +131,7 @@ function! s:GoInstallBinaries(updateBinaries, ...)
 
   for [binary, pkg] in items(l:packages)
     let l:importPath = pkg[0]
-
-    let l:run_cmd = copy(l:cmd)
-    if len(l:pkg) > 1 && get(l:pkg[1], l:platform, '') isnot ''
-      let l:run_cmd += get(l:pkg[1], l:platform, '')
-    endif
+    let l:goGetFlags = len(pkg) > 1 ? get(pkg[1], l:platform, '') : ''
 
     let binname = "go_" . binary . "_bin"
 
@@ -144,9 +147,9 @@ function! s:GoInstallBinaries(updateBinaries, ...)
         echo "vim-go: ". binary ." not found. Installing ". importPath . " to folder " . go_bin_path
       endif
 
-      let [l:out, l:err] = go#util#Exec(l:run_cmd + [l:importPath])
-      if l:err
-        echom "Error installing " . l:importPath . ": " . l:out
+      let out = go#util#System(printf('%s %s %s', cmd, l:goGetFlags, shellescape(importPath)))
+      if go#util#ShellError() != 0
+        echom "Error installing " . importPath . ": " . out
       endif
     endif
   endfor
@@ -260,7 +263,7 @@ augroup vim-go
   autocmd BufWinEnter *.go call go#guru#ClearSameIds()
 
   autocmd BufEnter *.go
-        \  if go#config#AutodetectGopath() && !exists('b:old_gopath')
+        \  if get(g:, 'go_autodetect_gopath', 0) && !exists('b:old_gopath')
         \|   let b:old_gopath = exists('$GOPATH') ? $GOPATH : -1
         \|   let $GOPATH = go#path#Detect()
         \| endif

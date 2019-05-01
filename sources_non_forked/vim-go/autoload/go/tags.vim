@@ -31,22 +31,24 @@ function! go#tags#run(start, end, offset, mode, fname, test_mode, ...) abort
     let args["modified"] = 1
   endif
 
-  let l:result = s:create_cmd(args)
+  let result = s:create_cmd(args)
   if has_key(result, 'err')
     call go#util#EchoError(result.err)
     return -1
   endif
 
+  let command = join(result.cmd, " ")
+
   if &modified
     let filename = expand("%:p:gs!\\!/!")
     let content  = join(go#util#GetLines(), "\n")
     let in = filename . "\n" . strlen(content) . "\n" . content
-    let [l:out, l:err] = go#util#Exec(l:result.cmd, in)
+    let out = go#util#System(command, in)
   else
-    let [l:out, l:err] = go#util#Exec(l:result.cmd)
+    let out = go#util#System(command)
   endif
 
-  if l:err != 0
+  if go#util#ShellError() != 0
     call go#util#EchoError(out)
     return
   endif
@@ -113,18 +115,19 @@ func s:create_cmd(args) abort
   if empty(bin_path)
     return {'err': "gomodifytags does not exist"}
   endif
+  let bin_path = go#util#Shellescape(bin_path)
 
   let l:start = a:args.start
   let l:end = a:args.end
   let l:offset = a:args.offset
   let l:mode = a:args.mode
   let l:cmd_args = a:args.cmd_args
-  let l:modifytags_transform = go#config#AddtagsTransform()
+  let l:modifytags_transform = get(g:, 'go_addtags_transform', "snakecase")
 
   " start constructing the command
   let cmd = [bin_path]
   call extend(cmd, ["-format", "json"])
-  call extend(cmd, ["-file", a:args.fname])
+  call extend(cmd, ["-file", go#util#Shellescape(a:args.fname)])
   call extend(cmd, ["-transform", l:modifytags_transform])
 
   if has_key(a:args, "modified")

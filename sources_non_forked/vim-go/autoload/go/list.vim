@@ -1,3 +1,11 @@
+if !exists("g:go_list_type")
+  let g:go_list_type = ""
+endif
+
+if !exists("g:go_list_type_commands")
+  let g:go_list_type_commands = {}
+endif
+
 " Window opens the list with the given height up to 10 lines maximum.
 " Otherwise g:go_loclist_height is used.
 "
@@ -14,7 +22,7 @@ function! go#list#Window(listtype, ...) abort
     return
   endif
 
-  let height = go#config#ListHeight()
+  let height = get(g:, "go_list_height", 0)
   if height == 0
     " prevent creating a large location height for a large set of numbers
     if a:1 > 10
@@ -105,7 +113,7 @@ endfunction
 
 " Close closes the location list
 function! go#list#Close(listtype) abort
-  let autoclose_window = go#config#ListAutoclose()
+  let autoclose_window = get(g:, 'go_list_autoclose', 1)
   if !autoclose_window
     return
   endif
@@ -118,12 +126,13 @@ function! go#list#Close(listtype) abort
 endfunction
 
 function! s:listtype(listtype) abort
-  let listtype = go#config#ListType()
-  if empty(listtype)
-    return a:listtype
+  if g:go_list_type == "locationlist"
+    return "locationlist"
+  elseif g:go_list_type == "quickfix"
+    return "quickfix"
   endif
 
-  return listtype
+  return a:listtype
 endfunction
 
 " s:default_list_type_commands is the defaults that will be used for each of
@@ -160,7 +169,7 @@ function! go#list#Type(for) abort
     let l:listtype = "quickfix"
   endif
 
-  return get(go#config#ListTypeCommands(), a:for, l:listtype)
+  return get(g:go_list_type_commands, a:for, l:listtype)
 endfunction
 
 " vim: sw=2 ts=2 et

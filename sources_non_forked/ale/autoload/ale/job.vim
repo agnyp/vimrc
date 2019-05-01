@@ -8,9 +8,6 @@
 "   ale#job#IsRunning(job_id) -> 1 if running, 0 otherwise.
 "   ale#job#Stop(job_id)
 
-" A setting for wrapping commands.
-let g:ale_command_wrapper = get(g:, 'ale_command_wrapper', '')
-
 if !has_key(s:, 'job_map')
     let s:job_map = {}
 endif
@@ -122,7 +119,7 @@ function! s:VimCloseCallback(channel) abort
     if job_status(l:job) is# 'dead'
         try
             if !empty(l:info) && has_key(l:info, 'exit_cb')
-                call ale#util#GetFunction(l:info.exit_cb)(l:job_id, get(l:info, 'exit_code', 1))
+                call ale#util#GetFunction(l:info.exit_cb)(l:job_id, l:info.exit_code)
             endif
         finally
             " Automatically forget about the job after it's done.
@@ -211,7 +208,7 @@ function! ale#job#PrepareCommand(buffer, command) abort
         return 'cmd /s/c "' . l:command . '"'
     endif
 
-    if &shell =~? 'fish$\|pwsh$'
+    if &shell =~? 'fish$'
         return ['/bin/sh', '-c', l:command]
     endif
 

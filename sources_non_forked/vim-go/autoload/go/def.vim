@@ -8,7 +8,7 @@ function! go#def#Jump(mode) abort
   " godef which also has it's own quirks. But this issue come up so many
   " times I've decided to support both. By default we still use guru as it
   " covers all edge cases, but now anyone can switch to godef if they wish
-  let bin_name = go#config#DefMode()
+  let bin_name = get(g:, 'go_def_mode', 'guru')
   if bin_name == 'godef'
     if &modified
       " Write current unsaved buffer to a temp file and use the modified content
@@ -17,16 +17,23 @@ function! go#def#Jump(mode) abort
       let fname = l:tmpname
     endif
 
-    let [l:out, l:err] = go#util#Exec(['godef',
-          \ '-f=' . l:fname,
-          \ '-o=' . go#util#OffsetCursor(),
-          \ '-t'])
+    let bin_path = go#path#CheckBinPath("godef")
+    if empty(bin_path)
+      return
+    endif
+    let command = printf("%s -f=%s -o=%s -t", go#util#Shellescape(bin_path),
+      \ go#util#Shellescape(fname), go#util#OffsetCursor())
+    let out = go#util#System(command)
     if exists("l:tmpname")
       call delete(l:tmpname)
     endif
-
   elseif bin_name == 'guru'
-    let cmd = [bin_name, '-tags', go#config#BuildTags()]
+    let bin_path = go#path#CheckBinPath("guru")
+    if empty(bin_path)
+      return
+    endif
+
+    let cmd = [bin_path]
     let stdin_content = ""
 
     if &modified
@@ -35,7 +42,13 @@ function! go#def#Jump(mode) abort
       call add(cmd, "-modified")
     endif
 
-    call extend(cmd, ["definition", fname . ':#' . go#util#OffsetCursor()])
+    if exists('g:go_build_tags')
+      let tags = get(g:, 'go_build_tags')
+      call extend(cmd, ["-tags", tags])
+    endif
+
+    let fname = fname.':#'.go#util#OffsetCursor()
+    call extend(cmd, ["definition", fname])
 
     if go#util#has_job()
       let l:spawn_args = {
@@ -53,17 +66,18 @@ function! go#def#Jump(mode) abort
       return
     endif
 
+    let command = join(cmd, " ")
     if &modified
-      let [l:out, l:err] = go#util#Exec(l:cmd, stdin_content)
+      let out = go#util#System(command, stdin_content)
     else
-      let [l:out, l:err] = go#util#Exec(l:cmd)
+      let out = go#util#System(command)
     endif
   else
     call go#util#EchoError('go_def_mode value: '. bin_name .' is not valid. Valid values are: [godef, guru]')
     return
   endif
 
-  if l:err
+  if go#util#ShellError() != 0
     call go#util#EchoError(out)
     return
   endif
@@ -124,7 +138,7 @@ function! go#def#jump_to_declaration(out, mode, bin_name) abort
   if filename != fnamemodify(expand("%"), ':p:gs?\\?/?')
     " jump to existing buffer if, 1. we have enabled it, 2. the buffer is loaded
     " and 3. there is buffer window number we switch to
-    if go#config#DefReuseBuffer() && bufloaded(filename) != 0 && bufwinnr(filename) != -1
+    if get(g:, 'go_def_reuse_buffer', 0) && bufloaded(filename) != 0 && bufwinnr(filename) != -1
       " jumpt to existing buffer if it exists
       execute bufwinnr(filename) . 'wincmd w'
     else

@@ -1,28 +1,20 @@
 " Author: keith <k@keith.so>
 " Description: pylint for python files
 
-call ale#Set('python_pylint_executable', 'pylint')
-call ale#Set('python_pylint_options', '')
-call ale#Set('python_pylint_use_global', get(g:, 'ale_use_global_executables', 0))
-call ale#Set('python_pylint_change_directory', 1)
+let g:ale_python_pylint_executable =
+\   get(g:, 'ale_python_pylint_executable', 'pylint')
+
+let g:ale_python_pylint_options =
+\   get(g:, 'ale_python_pylint_options', '')
+
+let g:ale_python_pylint_use_global = get(g:, 'ale_python_pylint_use_global', 0)
 
 function! ale_linters#python#pylint#GetExecutable(buffer) abort
     return ale#python#FindExecutable(a:buffer, 'python_pylint', ['pylint'])
 endfunction
 
 function! ale_linters#python#pylint#GetCommand(buffer) abort
-    let l:cd_string = ale#Var(a:buffer, 'python_pylint_change_directory')
-    \   ? ale#path#BufferCdString(a:buffer)
-    \   : ''
-
-    let l:executable = ale_linters#python#pylint#GetExecutable(a:buffer)
-
-    let l:exec_args = l:executable =~? 'pipenv$'
-    \   ? ' run pylint'
-    \   : ''
-
-    return l:cd_string
-    \   . ale#Escape(l:executable) . l:exec_args
+    return ale#Escape(ale_linters#python#pylint#GetExecutable(a:buffer))
     \   . ' ' . ale#Var(a:buffer, 'python_pylint_options')
     \   . ' --output-format text --msg-template="{path}:{line}:{column}: {msg_id} ({symbol}) {msg}" --reports n'
     \   . ' %s'
@@ -32,7 +24,7 @@ function! ale_linters#python#pylint#Handle(buffer, lines) abort
     " Matches patterns like the following:
     "
     " test.py:4:4: W0101 (unreachable) Unreachable code
-    let l:pattern = '\v^[a-zA-Z]?:?[^:]+:(\d+):(\d+): ([[:alnum:]]+) \(([^(]*)\) (.*)$'
+    let l:pattern = '\v^[^:]+:(\d+):(\d+): ([[:alnum:]]+) \(([^(]*)\) (.*)$'
     let l:output = []
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)

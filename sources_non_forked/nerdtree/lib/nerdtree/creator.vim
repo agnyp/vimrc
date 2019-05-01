@@ -178,28 +178,24 @@ function! s:Creator.createMirror()
 endfunction
 
 " FUNCTION: s:Creator._createTreeWin() {{{1
-" Initialize the NERDTree window.  Open the window, size it properly, set all
-" local options, etc.
+" Inits the NERD tree window. ie. opens it, sizes it, sets all the local
+" options etc
 function! s:Creator._createTreeWin()
-    let l:splitLocation = g:NERDTreeWinPos ==# 'left' ? 'topleft ' : 'botright '
-    let l:splitSize = g:NERDTreeWinSize
+    "create the nerd tree window
+    let splitLocation = g:NERDTreeWinPos ==# "left" ? "topleft " : "botright "
+    let splitSize = g:NERDTreeWinSize
 
     if !g:NERDTree.ExistsForTab()
         let t:NERDTreeBufName = self._nextBufferName()
-        silent! execute l:splitLocation . 'vertical ' . l:splitSize . ' new'
-        silent! execute 'edit ' . t:NERDTreeBufName
+        silent! exec splitLocation . 'vertical ' . splitSize . ' new'
+        silent! exec "edit " . t:NERDTreeBufName
     else
-        silent! execute l:splitLocation . 'vertical ' . l:splitSize . ' split'
-        silent! execute 'buffer ' . t:NERDTreeBufName
-    endif
-
-    call self._setCommonBufOptions()
-
-    if has('patch-7.4.1925')
-        clearjumps
+        silent! exec splitLocation . 'vertical ' . splitSize . ' split'
+        silent! exec "buffer " . t:NERDTreeBufName
     endif
 
     setlocal winfixwidth
+    call self._setCommonBufOptions()
 endfunction
 
 " FUNCTION: s:Creator._isBufHidden(nr) {{{1

@@ -23,15 +23,22 @@ function! nerdtree#ui_glue#createDefaultBindings()
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapOpenSplit, 'scope': "Node", 'callback': s."openHSplit" })
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapOpenVSplit, 'scope': "Node", 'callback': s."openVSplit" })
 
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapOpenSplit, 'scope': "Bookmark", 'callback': s."openHSplit" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapOpenVSplit, 'scope': "Bookmark", 'callback': s."openVSplit" })
+
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreview, 'scope': "Node", 'callback': s."previewNodeCurrent" })
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewVSplit, 'scope': "Node", 'callback': s."previewNodeVSplit" })
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewSplit, 'scope': "Node", 'callback': s."previewNodeHSplit" })
 
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreview, 'scope': "Bookmark", 'callback': s."previewNodeCurrent" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewVSplit, 'scope': "Bookmark", 'callback': s."previewNodeVSplit" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapPreviewSplit, 'scope': "Bookmark", 'callback': s."previewNodeHSplit" })
+
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapOpenRecursively, 'scope': "DirNode", 'callback': s."openNodeRecursively" })
 
-    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapUpdir, 'scope': 'all', 'callback': s . 'upDirCurrentRootClosed' })
-    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapUpdirKeepOpen, 'scope': 'all', 'callback': s . 'upDirCurrentRootOpen' })
-    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapChangeRoot, 'scope': 'Node', 'callback': s . 'chRoot' })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapUpdir, 'scope': "all", 'callback': s."upDirCurrentRootClosed" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapUpdirKeepOpen, 'scope': "all", 'callback': s."upDirCurrentRootOpen" })
+    call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapChangeRoot, 'scope': "Node", 'callback': s."chRoot" })
 
     call NERDTreeAddKeyMap({ 'key': g:NERDTreeMapChdir, 'scope': "Node", 'callback': s."chCwd" })
 
@@ -619,33 +626,40 @@ function! s:toggleZoom()
     call b:NERDTree.ui.toggleZoom()
 endfunction
 
-" FUNCTION: nerdtree#ui_glue#upDir(preserveState) {{{1
-" Move the NERDTree up one level.
+"FUNCTION: nerdtree#ui_glue#upDir(keepState) {{{1
+"moves the tree up a level
 "
-" Args:
-" preserveState: if 1, the current root is left open when the new tree is
-" rendered; if 0, the current root node is closed
-function! nerdtree#ui_glue#upDir(preserveState)
+"Args:
+"keepState: 1 if the current root should be left open when the tree is
+"re-rendered
+function! nerdtree#ui_glue#upDir(keepState)
+    let cwd = b:NERDTree.root.path.str({'format': 'UI'})
+    if cwd ==# "/" || cwd =~# '^[^/]..$'
+        call nerdtree#echo("already at top dir")
+    else
+        if !a:keepState
+            call b:NERDTree.root.close()
+        endif
 
-    try
-        call b:NERDTree.root.cacheParent()
-    catch /^NERDTree.CannotCacheParentError/
-        call nerdtree#echo('already at root directory')
-        return
-    endtry
+        let oldRoot = b:NERDTree.root
 
-    let l:oldRoot = b:NERDTree.root
-    let l:newRoot = b:NERDTree.root.parent
+        if empty(b:NERDTree.root.parent)
+            let path = b:NERDTree.root.path.getParent()
+            let newRoot = g:NERDTreeDirNode.New(path, b:NERDTree)
+            call newRoot.open()
+            call newRoot.transplantChild(b:NERDTree.root)
+            let b:NERDTree.root = newRoot
+        else
+            let b:NERDTree.root = b:NERDTree.root.parent
+        endif
 
-    call l:newRoot.open()
-    call l:newRoot.transplantChild(l:oldRoot)
+        if g:NERDTreeChDirMode ==# 2
+            call b:NERDTree.root.path.changeToDir()
+        endif
 
-    if !a:preserveState
-        call l:oldRoot.close()
+        call b:NERDTree.render()
+        call oldRoot.putCursorHere(0, 0)
     endif
-
-    call b:NERDTree.changeRoot(l:newRoot)
-    call l:oldRoot.putCursorHere(0, 0)
 endfunction
 
 " FUNCTION: s:upDirCurrentRootOpen() {{{1

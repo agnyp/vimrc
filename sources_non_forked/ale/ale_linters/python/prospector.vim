@@ -7,21 +7,14 @@ let g:ale_python_prospector_executable =
 let g:ale_python_prospector_options =
 \   get(g:, 'ale_python_prospector_options', '')
 
-let g:ale_python_prospector_use_global = get(g:, 'ale_python_prospector_use_global', get(g:, 'ale_use_global_executables', 0))
+let g:ale_python_prospector_use_global = get(g:, 'ale_python_prospector_use_global', 0)
 
 function! ale_linters#python#prospector#GetExecutable(buffer) abort
     return ale#python#FindExecutable(a:buffer, 'python_prospector', ['prospector'])
 endfunction
 
 function! ale_linters#python#prospector#GetCommand(buffer) abort
-    let l:executable = ale_linters#python#prospector#GetExecutable(a:buffer)
-
-    let l:exec_args = l:executable =~? 'pipenv$'
-    \   ? ' run prospector'
-    \   : ''
-
-    return ale#Escape(l:executable)
-    \   . l:exec_args
+    return ale#Escape(ale_linters#python#prospector#GetExecutable(a:buffer))
     \   . ' ' . ale#Var(a:buffer, 'python_prospector_options')
     \   . ' --messages-only --absolute-paths --zero-exit --output-format json'
     \   . ' %s'

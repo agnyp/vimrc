@@ -1,9 +1,8 @@
-" Author: KabbAmine - https://github.com/KabbAmine,
-"   Ben Falconer <ben@falconers.me.uk>
+" Author: KabbAmine - https://github.com/KabbAmine
 
 call ale#linter#Define('sass', {
 \   'name': 'sasslint',
 \   'executable': 'sass-lint',
-\   'command_callback': 'ale#handlers#sasslint#GetCommand',
+\   'command': 'sass-lint -v -q -f compact %t',
 \   'callback': 'ale#handlers#css#HandleCSSLintFormat',
 \})

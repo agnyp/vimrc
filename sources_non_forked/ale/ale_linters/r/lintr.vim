@@ -22,7 +22,7 @@ function! ale_linters#r#lintr#GetCommand(buffer) abort
     \   . l:lint_cmd
 
     return ale#path#BufferCdString(a:buffer)
-    \   . 'Rscript --vanilla -e '
+    \   . 'Rscript -e '
     \   . ale#Escape(l:cmd_string) . ' %t'
 endfunction
 

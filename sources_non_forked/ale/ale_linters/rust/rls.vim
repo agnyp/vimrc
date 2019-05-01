@@ -12,11 +12,12 @@ function! ale_linters#rust#rls#GetCommand(buffer) abort
     let l:executable = ale_linters#rust#rls#GetExecutable(a:buffer)
     let l:toolchain = ale#Var(a:buffer, 'rust_rls_toolchain')
 
-    if empty(l:toolchain)
-      return ale#Escape(l:executable)
-    else
-      return ale#Escape(l:executable) . ' +' . ale#Escape(l:toolchain)
-    endif
+    return ale#Escape(l:executable)
+    \   . ' +' . ale#Escape(l:toolchain)
+endfunction
+
+function! ale_linters#rust#rls#GetLanguage(buffer) abort
+    return 'rust'
 endfunction
 
 function! ale_linters#rust#rls#GetProjectRoot(buffer) abort
@@ -30,6 +31,6 @@ call ale#linter#Define('rust', {
 \   'lsp': 'stdio',
 \   'executable_callback': 'ale_linters#rust#rls#GetExecutable',
 \   'command_callback': 'ale_linters#rust#rls#GetCommand',
-\   'language': 'rust',
+\   'language_callback': 'ale_linters#rust#rls#GetLanguage',
 \   'project_root_callback': 'ale_linters#rust#rls#GetProjectRoot',
 \})

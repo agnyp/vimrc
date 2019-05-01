@@ -1,17 +1,6 @@
 function! go#cmd#autowrite() abort
   if &autowrite == 1 || &autowriteall == 1
     silent! wall
-  else
-    for l:nr in range(0, bufnr('$'))
-      if buflisted(l:nr) && getbufvar(l:nr, '&modified')
-        " Sleep one second to make sure people see the message. Otherwise it is
-        " often immediacy overwritten by the async messages (which also don't
-        " invoke the "hit ENTER" prompt).
-        call go#util#EchoWarning('[No write since last change]')
-        sleep 1
-        return
-      endif
-    endfor
   endif
 endfunction
 
@@ -25,14 +14,14 @@ function! go#cmd#Build(bang, ...) abort
   " placeholder with the current folder (indicated with '.'). We also pass -i
   " that tries to install the dependencies, this has the side effect that it
   " caches the build results, so every other build is faster.
-  let l:args =
-        \ ['build', '-tags', go#config#BuildTags()] +
+  let args =
+        \ ["build"] +
         \ map(copy(a:000), "expand(v:val)") +
         \ [".", "errors"]
 
   " Vim async.
   if go#util#has_job()
-    if go#config#EchoCommandInfo()
+    if get(g:, 'go_echo_command_info', 1)
       call go#util#EchoProgress("building dispatched ...")
     endif
 
@@ -44,7 +33,7 @@ function! go#cmd#Build(bang, ...) abort
 
   " Nvim async.
   elseif has('nvim')
-    if go#config#EchoCommandInfo()
+    if get(g:, 'go_echo_command_info', 1)
       call go#util#EchoProgress("building dispatched ...")
     endif
 
@@ -88,26 +77,21 @@ endfunction
 " BuildTags sets or shows the current build tags used for tools
 function! go#cmd#BuildTags(bang, ...) abort
   if a:0
-    let v = a:1
-    if v == '""' || v == "''"
-      let v = ""
-    endif
-    call go#config#SetBuildTags(v)
-    let tags = go#config#BuildTags()
-    if empty(tags)
+    if a:0 == 1 && a:1 == '""'
+      unlet g:go_build_tags
       call go#util#EchoSuccess("build tags are cleared")
     else
-      call go#util#EchoSuccess("build tags are changed to: " . tags)
+      let g:go_build_tags = a:1
+      call go#util#EchoSuccess("build tags are changed to: ". a:1)
     endif
 
     return
   endif
 
-  let tags = go#config#BuildTags()
-  if empty(tags)
+  if !exists('g:go_build_tags')
     call go#util#EchoSuccess("build tags are not set")
   else
-    call go#util#EchoSuccess("current build tags: " . tags)
+    call go#util#EchoSuccess("current build tags: ". g:go_build_tags)
   endif
 endfunction
 
@@ -186,12 +170,12 @@ function! go#cmd#Install(bang, ...) abort
     " expand all wildcards(i.e: '%' to the current file name)
     let goargs = map(copy(a:000), "expand(v:val)")
 
-    if go#config#EchoCommandInfo()
+    if get(g:, 'go_echo_command_info', 1)
       call go#util#EchoProgress("installing dispatched ...")
     endif
 
     call s:cmd_job({
-          \ 'cmd': ['go', 'install', '-tags', go#config#BuildTags()] + goargs,
+          \ 'cmd': ['go', 'install'] + goargs,
           \ 'bang': a:bang,
           \ 'for': 'GoInstall',
           \})
