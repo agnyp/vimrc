@@ -39,10 +39,10 @@ endfunction
 call ale#linter#Define('markdown', {
 \   'name': 'remark_lint',
 \   'aliases': ['remark-lint'],
-\   'executable': {b -> ale#node#FindExecutable(b, 'markdown_remark_lint', [
+\   'executable_callback': ale#node#FindExecutableFunc('markdown_remark_lint', [
 \       'node_modules/.bin/remark',
-\   ])},
-\   'command': function('ale_linters#markdown#remark_lint#GetCommand'),
+\   ]),
+\   'command_callback': 'ale_linters#markdown#remark_lint#GetCommand',
 \   'callback': 'ale_linters#markdown#remark_lint#Handle',
 \   'output_stream': 'stderr',
 \})

@@ -35,7 +35,7 @@ endfunction
 call ale#linter#Define('elixir', {
 \   'name': 'dialyxir',
 \   'executable': 'mix',
-\   'command': function('ale_linters#elixir#dialyxir#GetCommand'),
+\   'command_callback': 'ale_linters#elixir#dialyxir#GetCommand',
 \   'callback': 'ale_linters#elixir#dialyxir#Handle',
 \})
 

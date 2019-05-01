@@ -69,7 +69,7 @@ endfunction
 
 call ale#linter#Define('typescript', {
 \   'name': 'tslint',
-\   'executable': function('ale#handlers#tslint#GetExecutable'),
-\   'command': function('ale_linters#typescript#tslint#GetCommand'),
+\   'executable_callback': 'ale#handlers#tslint#GetExecutable',
+\   'command_callback': 'ale_linters#typescript#tslint#GetCommand',
 \   'callback': 'ale_linters#typescript#tslint#Handle',
 \})

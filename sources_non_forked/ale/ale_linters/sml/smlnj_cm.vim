@@ -12,9 +12,9 @@ endfunction
 call ale#linter#Define('sml', {
 \   'name': 'smlnj_cm',
 \   'aliases': ['smlnj-cm'],
-\   'executable': function('ale#handlers#sml#GetExecutableSmlnjCm'),
+\   'executable_callback': 'ale#handlers#sml#GetExecutableSmlnjCm',
 \   'lint_file': 1,
-\   'command': function('ale_linters#sml#smlnj_cm#GetCommand'),
+\   'command_callback': 'ale_linters#sml#smlnj_cm#GetCommand',
 \   'callback': 'ale#handlers#sml#Handle',
 \})
 

@@ -32,7 +32,7 @@ endfunction
 call ale#linter#Define('rst', {
 \   'name': 'rstcheck',
 \   'executable': 'rstcheck',
-\   'command': function('ale_linters#rst#rstcheck#GetCommand'),
+\   'command_callback': 'ale_linters#rst#rstcheck#GetCommand',
 \   'callback': 'ale_linters#rst#rstcheck#Handle',
 \   'output_stream': 'both',
 \})

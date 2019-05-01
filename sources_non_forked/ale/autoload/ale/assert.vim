@@ -26,11 +26,6 @@ function! ale#assert#Linter(expected_executable, expected_command) abort
     let l:linter = s:GetLinter()
     let l:executable = ale#linter#GetExecutable(l:buffer, l:linter)
 
-    while ale#command#IsDeferred(l:executable)
-        call ale#test#FlushJobs()
-        let l:executable = l:executable.value
-    endwhile
-
     if has_key(l:linter, 'command_chain')
         let l:callbacks = map(copy(l:linter.command_chain), 'v:val.callback')
 
@@ -59,18 +54,13 @@ function! ale#assert#Linter(expected_executable, expected_command) abort
         endif
     else
         let l:command = ale#linter#GetCommand(l:buffer, l:linter)
-
-        while ale#command#IsDeferred(l:command)
-            call ale#test#FlushJobs()
-            let l:command = l:command.value
-        endwhile
     endif
 
     if type(l:command) is v:t_string
         " Replace %e with the escaped executable, so tests keep passing after
         " linters are changed to use %e.
         let l:command = substitute(l:command, '%e', '\=ale#Escape(l:executable)', 'g')
-    elseif type(l:command) is v:t_list
+    else
         call map(l:command, 'substitute(v:val, ''%e'', ''\=ale#Escape(l:executable)'', ''g'')')
     endif
 
@@ -114,7 +104,7 @@ endfunction
 function! ale#assert#LSPProject(expected_root) abort
     let l:buffer = bufnr('')
     let l:linter = s:GetLinter()
-    let l:root = ale#lsp_linter#FindProjectRoot(l:buffer, l:linter)
+    let l:root = ale#util#GetFunction(l:linter.project_root_callback)(l:buffer)
 
     AssertEqual a:expected_root, l:root
 endfunction
@@ -122,20 +112,9 @@ endfunction
 function! ale#assert#LSPAddress(expected_address) abort
     let l:buffer = bufnr('')
     let l:linter = s:GetLinter()
-    let l:address = ale#linter#GetAddress(l:buffer, l:linter)
+    let l:address = ale#util#GetFunction(l:linter.address_callback)(l:buffer)
 
     AssertEqual a:expected_address, l:address
-endfunction
-
-function! ale#assert#SetUpLinterTestCommands() abort
-    command! -nargs=+ WithChainResults :call ale#assert#WithChainResults(<args>)
-    command! -nargs=+ AssertLinter :call ale#assert#Linter(<args>)
-    command! -nargs=0 AssertLinterNotExecuted :call ale#assert#LinterNotExecuted()
-    command! -nargs=+ AssertLSPOptions :call ale#assert#LSPOptions(<args>)
-    command! -nargs=+ AssertLSPConfig :call ale#assert#LSPConfig(<args>)
-    command! -nargs=+ AssertLSPLanguage :call ale#assert#LSPLanguage(<args>)
-    command! -nargs=+ AssertLSPProject :call ale#assert#LSPProject(<args>)
-    command! -nargs=+ AssertLSPAddress :call ale#assert#LSPAddress(<args>)
 endfunction
 
 " A dummy function for making sure this module is loaded.
@@ -149,12 +128,6 @@ function! ale#assert#SetUpLinterTest(filetype, name) abort
 
     let l:prefix = 'ale_' . a:filetype . '_' . a:name
     let b:filter_expr = 'v:val[: len(l:prefix) - 1] is# l:prefix'
-
-    Save g:ale_lsp_root
-    let g:ale_lsp_root = {}
-
-    Save b:ale_lsp_root
-    unlet! b:ale_lsp_root
 
     Save g:ale_c_build_dir
     unlet! g:ale_c_build_dir
@@ -178,7 +151,14 @@ function! ale#assert#SetUpLinterTest(filetype, name) abort
         call ale#test#SetDirectory('/testplugin/test/command_callback')
     endif
 
-    call ale#assert#SetUpLinterTestCommands()
+    command! -nargs=+ WithChainResults :call ale#assert#WithChainResults(<args>)
+    command! -nargs=+ AssertLinter :call ale#assert#Linter(<args>)
+    command! -nargs=0 AssertLinterNotExecuted :call ale#assert#LinterNotExecuted()
+    command! -nargs=+ AssertLSPOptions :call ale#assert#LSPOptions(<args>)
+    command! -nargs=+ AssertLSPConfig :call ale#assert#LSPConfig(<args>)
+    command! -nargs=+ AssertLSPLanguage :call ale#assert#LSPLanguage(<args>)
+    command! -nargs=+ AssertLSPProject :call ale#assert#LSPProject(<args>)
+    command! -nargs=+ AssertLSPAddress :call ale#assert#LSPAddress(<args>)
 endfunction
 
 function! ale#assert#TearDownLinterTest() abort

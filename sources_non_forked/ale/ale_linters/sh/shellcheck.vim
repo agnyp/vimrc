@@ -8,7 +8,6 @@
 " let g:ale_sh_shellcheck_exclusions = 'SC2002,SC2004'
 call ale#Set('sh_shellcheck_exclusions', get(g:, 'ale_linters_sh_shellcheck_exclusions', ''))
 call ale#Set('sh_shellcheck_executable', 'shellcheck')
-call ale#Set('sh_shellcheck_dialect', 'auto')
 call ale#Set('sh_shellcheck_options', '')
 
 function! ale_linters#sh#shellcheck#GetExecutable(buffer) abort
@@ -54,12 +53,8 @@ function! ale_linters#sh#shellcheck#GetCommand(buffer, version_output) abort
 
     let l:options = ale#Var(a:buffer, 'sh_shellcheck_options')
     let l:exclude_option = ale#Var(a:buffer, 'sh_shellcheck_exclusions')
-    let l:dialect = ale#Var(a:buffer, 'sh_shellcheck_dialect')
+    let l:dialect = ale_linters#sh#shellcheck#GetDialectArgument(a:buffer)
     let l:external_option = ale#semver#GTE(l:version, [0, 4, 0]) ? ' -x' : ''
-
-    if l:dialect is# 'auto'
-        let l:dialect = ale_linters#sh#shellcheck#GetDialectArgument(a:buffer)
-    endif
 
     return ale#path#BufferCdString(a:buffer)
     \   . ale#Escape(l:executable)
@@ -108,7 +103,7 @@ endfunction
 
 call ale#linter#Define('sh', {
 \   'name': 'shellcheck',
-\   'executable': function('ale_linters#sh#shellcheck#GetExecutable'),
+\   'executable_callback': 'ale_linters#sh#shellcheck#GetExecutable',
 \   'command_chain': [
 \       {'callback': 'ale_linters#sh#shellcheck#VersionCheck'},
 \       {'callback': 'ale_linters#sh#shellcheck#GetCommand'},

@@ -30,8 +30,8 @@ endfunction
 
 call ale#linter#Define('puppet', {
 \   'name': 'puppet',
-\   'executable': {b -> ale#Var(b, 'puppet_puppet_executable')},
+\   'executable_callback': ale#VarFunc('puppet_puppet_executable'),
 \   'output_stream': 'stderr',
-\   'command': function('ale_linters#puppet#puppet#GetCommand'),
+\   'command_callback': 'ale_linters#puppet#puppet#GetCommand',
 \   'callback': 'ale_linters#puppet#puppet#Handle',
 \})

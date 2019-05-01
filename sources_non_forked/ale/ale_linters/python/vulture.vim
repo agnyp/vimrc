@@ -46,14 +46,19 @@ endfunction
 
 
 function! ale_linters#python#vulture#Handle(buffer, lines) abort
-    let l:output = ale#python#HandleTraceback(a:lines, 10)
-
-    if !empty(l:output)
-        return l:output
-    endif
+    for l:line in a:lines[:10]
+        if match(l:line, '^Traceback') >= 0
+            return [{
+            \   'lnum': 1,
+            \   'text': 'An exception was thrown. See :ALEDetail',
+            \   'detail': join(a:lines, "\n"),
+            \}]
+        endif
+    endfor
 
     " Matches patterns line the following:
     let l:pattern = '\v^([a-zA-Z]?:?[^:]+):(\d+): (.*)$'
+    let l:output = []
     let l:dir = s:GetDir(a:buffer)
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
@@ -73,8 +78,8 @@ endfunction
 
 call ale#linter#Define('python', {
 \   'name': 'vulture',
-\   'executable': function('ale_linters#python#vulture#GetExecutable'),
-\   'command': function('ale_linters#python#vulture#GetCommand'),
+\   'executable_callback': 'ale_linters#python#vulture#GetExecutable',
+\   'command_callback': 'ale_linters#python#vulture#GetCommand',
 \   'callback': 'ale_linters#python#vulture#Handle',
 \   'lint_file': 1,
 \})

@@ -35,7 +35,7 @@ function! go#play#Share(count, line1, line2) abort
   endif
 
   if go#config#PlayOpenBrowser()
-    call go#util#OpenBrowser(url)
+    call go#tool#OpenBrowser(url)
   endif
 
   echo "vim-go: snippet uploaded: ".url

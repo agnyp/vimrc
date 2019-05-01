@@ -52,24 +52,20 @@ function! ale#symbol#HandleLSPResponse(conn_id, response) abort
         if empty(l:item_list)
             call ale#util#Execute('echom ''No symbols found.''')
         else
-            call ale#preview#ShowSelection(l:item_list, l:options)
+            call ale#preview#ShowSelection(l:item_list)
         endif
     endif
 endfunction
 
-function! s:OnReady(query, options, linter, lsp_details) abort
-    let l:id = a:lsp_details.connection_id
-
-    if !ale#lsp#HasCapability(l:id, 'symbol_search')
-        return
-    endif
-
+function! s:OnReady(linter, lsp_details, query, ...) abort
     let l:buffer = a:lsp_details.buffer
 
     " If we already made a request, stop here.
     if getbufvar(l:buffer, 'ale_symbol_request_made', 0)
         return
     endif
+
+    let l:id = a:lsp_details.connection_id
 
     let l:Callback = function('ale#symbol#HandleLSPResponse')
     call ale#lsp#RegisterCallback(l:id, l:Callback)
@@ -80,31 +76,34 @@ function! s:OnReady(query, options, linter, lsp_details) abort
     call setbufvar(l:buffer, 'ale_symbol_request_made', 1)
     let s:symbol_map[l:request_id] = {
     \   'buffer': l:buffer,
-    \   'use_relative_paths': has_key(a:options, 'use_relative_paths') ? a:options.use_relative_paths : 0
     \}
 endfunction
 
-function! ale#symbol#Search(args) abort
-    let [l:opts, l:query] = ale#args#Parse(['relative'], a:args)
+function! s:Search(linter, buffer, query) abort
+    let l:lsp_details = ale#lsp_linter#StartLSP(a:buffer, a:linter)
 
-    if empty(l:query)
+    if !empty(l:lsp_details)
+        call ale#lsp#WaitForCapability(
+        \   l:lsp_details.connection_id,
+        \   'symbol_search',
+        \   function('s:OnReady', [a:linter, l:lsp_details, a:query]),
+        \)
+    endif
+endfunction
+
+function! ale#symbol#Search(query) abort
+    if type(a:query) isnot v:t_string || empty(a:query)
         throw 'A non-empty string must be provided!'
     endif
 
     let l:buffer = bufnr('')
-    let l:options = {}
-
-    if has_key(l:opts, 'relative')
-        let l:options.use_relative_paths = 1
-    endif
 
     " Set a flag so we only make one request.
     call setbufvar(l:buffer, 'ale_symbol_request_made', 0)
-    let l:Callback = function('s:OnReady', [l:query, l:options])
 
     for l:linter in ale#linter#Get(getbufvar(l:buffer, '&filetype'))
         if !empty(l:linter.lsp) && l:linter.lsp isnot# 'tsserver'
-            call ale#lsp_linter#StartLSP(l:buffer, l:linter, l:Callback)
+            call s:Search(l:linter, l:buffer, a:query)
         endif
     endfor
 endfunction

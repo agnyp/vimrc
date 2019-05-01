@@ -25,7 +25,7 @@ endfunction
 call ale#linter#Define('scala', {
 \   'name': 'sbtserver',
 \   'lsp': 'socket',
-\   'address': function('ale_linters#scala#sbtserver#GetAddress'),
+\   'address_callback': 'ale_linters#scala#sbtserver#GetAddress',
 \   'language': 'scala',
-\   'project_root': function('ale_linters#scala#sbtserver#GetProjectRoot'),
+\   'project_root_callback': 'ale_linters#scala#sbtserver#GetProjectRoot',
 \})

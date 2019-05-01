@@ -51,7 +51,7 @@ endfunction
 
 call ale#linter#Define('haml', {
 \   'name': 'hamllint',
-\   'executable': function('ale_linters#haml#hamllint#GetExecutable'),
-\   'command': function('ale_linters#haml#hamllint#GetCommand'),
+\   'executable_callback': 'ale_linters#haml#hamllint#GetExecutable',
+\   'command_callback': 'ale_linters#haml#hamllint#GetCommand',
 \   'callback': 'ale_linters#haml#hamllint#Handle'
 \})

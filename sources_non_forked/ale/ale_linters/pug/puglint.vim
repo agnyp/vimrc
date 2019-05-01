@@ -33,10 +33,10 @@ endfunction
 
 call ale#linter#Define('pug', {
 \   'name': 'puglint',
-\   'executable': {b -> ale#node#FindExecutable(b, 'pug_puglint', [
+\   'executable_callback': ale#node#FindExecutableFunc('pug_puglint', [
 \       'node_modules/.bin/pug-lint',
-\   ])},
+\   ]),
 \   'output_stream': 'stderr',
-\   'command': function('ale_linters#pug#puglint#GetCommand'),
+\   'command_callback': 'ale_linters#pug#puglint#GetCommand',
 \   'callback': 'ale#handlers#unix#HandleAsError',
 \})

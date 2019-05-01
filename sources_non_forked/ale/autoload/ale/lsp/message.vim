@@ -3,10 +3,6 @@
 "
 " Messages in this movie will be returned in the format
 " [is_notification, method_name, params?]
-"
-" All functions which accept line and column arguments expect them to be 1-based
-" (the same format as being returned by getpos() and friends), those then
-" will be converted to 0-based as specified by LSP.
 let g:ale_lsp_next_version_id = 1
 
 " The LSP protocols demands that we send every change to a document, including
@@ -41,7 +37,7 @@ function! ale#lsp#message#Initialize(root_path, initialization_options) abort
 endfunction
 
 function! ale#lsp#message#Initialized() abort
-    return [1, 'initialized', {}]
+    return [1, 'initialized']
 endfunction
 
 function! ale#lsp#message#Shutdown() abort
@@ -102,7 +98,7 @@ function! ale#lsp#message#Completion(buffer, line, column, trigger_character) ab
     \   'textDocument': {
     \       'uri': ale#path#ToURI(expand('#' . a:buffer . ':p')),
     \   },
-    \   'position': {'line': a:line - 1, 'character': a:column - 1},
+    \   'position': {'line': a:line - 1, 'character': a:column},
     \}]
 
     if !empty(a:trigger_character)
@@ -120,16 +116,7 @@ function! ale#lsp#message#Definition(buffer, line, column) abort
     \   'textDocument': {
     \       'uri': ale#path#ToURI(expand('#' . a:buffer . ':p')),
     \   },
-    \   'position': {'line': a:line - 1, 'character': a:column - 1},
-    \}]
-endfunction
-
-function! ale#lsp#message#TypeDefinition(buffer, line, column) abort
-    return [0, 'textDocument/typeDefinition', {
-    \   'textDocument': {
-    \       'uri': ale#path#ToURI(expand('#' . a:buffer . ':p')),
-    \   },
-    \   'position': {'line': a:line - 1, 'character': a:column - 1},
+    \   'position': {'line': a:line - 1, 'character': a:column},
     \}]
 endfunction
 
@@ -138,7 +125,7 @@ function! ale#lsp#message#References(buffer, line, column) abort
     \   'textDocument': {
     \       'uri': ale#path#ToURI(expand('#' . a:buffer . ':p')),
     \   },
-    \   'position': {'line': a:line - 1, 'character': a:column - 1},
+    \   'position': {'line': a:line - 1, 'character': a:column},
     \   'context': {'includeDeclaration': v:false},
     \}]
 endfunction
@@ -154,7 +141,7 @@ function! ale#lsp#message#Hover(buffer, line, column) abort
     \   'textDocument': {
     \       'uri': ale#path#ToURI(expand('#' . a:buffer . ':p')),
     \   },
-    \   'position': {'line': a:line - 1, 'character': a:column - 1},
+    \   'position': {'line': a:line - 1, 'character': a:column},
     \}]
 endfunction
 

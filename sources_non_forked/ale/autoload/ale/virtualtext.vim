@@ -47,6 +47,7 @@ function! ale#virtualtext#ShowMessage(message, hl_group) abort
         return
     endif
 
+    let l:cursor_position = getcurpos()
     let l:line = line('.')
     let l:buffer = bufnr('')
     let l:prefix = get(g:, 'ale_virtualtext_prefix', '> ')
@@ -116,7 +117,7 @@ function! ale#virtualtext#ShowCursorWarningWithDelay() abort
 
     call s:StopCursorTimer()
 
-    let l:pos = getpos('.')[0:2]
+    let l:pos = getcurpos()[0:2]
 
     " Check the current buffer, line, and column number against the last
     " recorded position. If the position has actually changed, *then*

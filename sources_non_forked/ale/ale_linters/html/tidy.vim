@@ -63,8 +63,8 @@ endfunction
 
 call ale#linter#Define('html', {
 \   'name': 'tidy',
-\   'executable': {b -> ale#Var(b, 'html_tidy_executable')},
+\   'executable_callback': ale#VarFunc('html_tidy_executable'),
 \   'output_stream': 'stderr',
-\   'command': function('ale_linters#html#tidy#GetCommand'),
+\   'command_callback': 'ale_linters#html#tidy#GetCommand',
 \   'callback': 'ale_linters#html#tidy#Handle',
 \ })

@@ -74,18 +74,23 @@ let s:end_col_pattern_map = {
 \}
 
 function! ale_linters#python#flake8#Handle(buffer, lines) abort
-    let l:output = ale#python#HandleTraceback(a:lines, 10)
-
-    if !empty(l:output)
-        return l:output
-    endif
+    for l:line in a:lines[:10]
+        if match(l:line, '^Traceback') >= 0
+            return [{
+            \   'lnum': 1,
+            \   'text': 'An exception was thrown. See :ALEDetail',
+            \   'detail': join(a:lines, "\n"),
+            \}]
+        endif
+    endfor
 
     " Matches patterns line the following:
     "
     " Matches patterns line the following:
     "
     " stdin:6:6: E111 indentation is not a multiple of four
-    let l:pattern = '\v^[a-zA-Z]?:?[^:]+:(\d+):?(\d+)?: ([[:alnum:]]+):? (.*)$'
+    let l:pattern = '\v^[a-zA-Z]?:?[^:]+:(\d+):?(\d+)?: ([[:alnum:]]+) (.*)$'
+    let l:output = []
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
         let l:code = l:match[3]
@@ -143,7 +148,7 @@ endfunction
 
 call ale#linter#Define('python', {
 \   'name': 'flake8',
-\   'executable': function('ale_linters#python#flake8#GetExecutable'),
+\   'executable_callback': 'ale_linters#python#flake8#GetExecutable',
 \   'command_chain': [
 \       {'callback': 'ale_linters#python#flake8#VersionCheck'},
 \       {'callback': 'ale_linters#python#flake8#GetCommand', 'output_stream': 'both'},
