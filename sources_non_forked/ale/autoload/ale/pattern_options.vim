@@ -1,6 +1,11 @@
 " Author: w0rp <devw0rp@gmail.com>
 " Description: Set options in files based on regex patterns.
 
+" A dictionary mapping regular expression patterns to arbitrary buffer
+" variables to be set. Useful for configuring ALE based on filename patterns.
+let g:ale_pattern_options = get(g:, 'ale_pattern_options', {})
+let g:ale_pattern_options_enabled = get(g:, 'ale_pattern_options_enabled', !empty(g:ale_pattern_options))
+
 " These variables are used to cache the sorting of patterns below.
 let s:last_pattern_options = {}
 let s:sorted_items = []
@@ -18,19 +23,17 @@ function! s:CmpPatterns(left_item, right_item) abort
 endfunction
 
 function! ale#pattern_options#SetOptions(buffer) abort
-    let l:pattern_options = get(g:, 'ale_pattern_options', {})
-
-    if empty(l:pattern_options)
-        " Stop if no options are set.
+    if !get(g:, 'ale_pattern_options_enabled', 0)
+    \|| empty(get(g:, 'ale_pattern_options', 0))
         return
     endif
 
     " The items will only be sorted whenever the patterns change.
-    if l:pattern_options != s:last_pattern_options
-        let s:last_pattern_options = deepcopy(l:pattern_options)
+    if g:ale_pattern_options != s:last_pattern_options
+        let s:last_pattern_options = deepcopy(g:ale_pattern_options)
         " The patterns are sorted, so they are applied consistently.
         let s:sorted_items = sort(
-        \   items(l:pattern_options),
+        \   items(g:ale_pattern_options),
         \   function('s:CmpPatterns')
         \)
     endif

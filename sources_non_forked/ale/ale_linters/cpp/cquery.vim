@@ -30,4 +30,5 @@ call ale#linter#Define('cpp', {
 \   'command_callback': 'ale_linters#cpp#cquery#GetCommand',
 \   'project_root_callback': 'ale_linters#cpp#cquery#GetProjectRoot',
 \   'initialization_options_callback': 'ale_linters#cpp#cquery#GetInitializationOptions',
+\   'language': 'cpp',
 \})

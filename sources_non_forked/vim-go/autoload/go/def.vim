@@ -26,12 +26,7 @@ function! go#def#Jump(mode) abort
     endif
 
   elseif bin_name == 'guru'
-    let cmd = [go#path#CheckBinPath(bin_name)]
-    let buildtags = go#config#BuildTags()
-    if buildtags isnot ''
-      let cmd += ['-tags', buildtags]
-    endif
-
+    let cmd = [bin_name, '-tags', go#config#BuildTags()]
     let stdin_content = ""
 
     if &modified
@@ -283,7 +278,13 @@ function! go#def#Stack(...) abort
 endfunction
 
 function s:def_job(args) abort
-  let l:start_options = go#job#Options(a:args)
+  let callbacks = go#job#Spawn(a:args)
+
+  let start_options = {
+        \ 'callback': callbacks.callback,
+        \ 'exit_cb': callbacks.exit_cb,
+        \ 'close_cb': callbacks.close_cb,
+        \ }
 
   if &modified
     let l:tmpname = tempname()
@@ -292,7 +293,7 @@ function s:def_job(args) abort
     let l:start_options.in_name = l:tmpname
   endif
 
-  call go#job#Start(a:args.cmd, start_options)
+  call job_start(a:args.cmd, start_options)
 endfunction
 
 " vim: sw=2 ts=2 et

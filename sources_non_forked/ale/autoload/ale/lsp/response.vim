@@ -105,17 +105,11 @@ function! ale#lsp#response#GetErrorMessage(response) abort
         return ''
     endif
 
-    " Include the traceback or error data as details, if present.
-    let l:error_data = get(a:response.error, 'data', {})
+    " Include the traceback as details, if it's there.
+    let l:traceback = get(get(a:response.error, 'data', {}), 'traceback', [])
 
-    if type(l:error_data) is type('')
-        let l:message .= "\n" . l:error_data
-    else
-        let l:traceback = get(l:error_data, 'traceback', [])
-
-        if type(l:traceback) is type([]) && !empty(l:traceback)
-            let l:message .= "\n" . join(l:traceback, "\n")
-        endif
+    if type(l:traceback) is type([]) && !empty(l:traceback)
+        let l:message .= "\n" . join(l:traceback, "\n")
     endif
 
     return l:message

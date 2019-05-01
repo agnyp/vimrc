@@ -1,3 +1,4 @@
+call ale#Set('wrap_command_as_one_argument', 0)
 " Author: w0rp <devw0rp@gmail.com>
 " Description: Linter registration and lazy-loading
 "   Retrieves linters as requested by the engine, loading them if needed.
@@ -46,16 +47,6 @@ function! ale#linter#Reset() abort
     let s:linters = {}
 endfunction
 
-" Return a reference to the linters loaded.
-" This is only for tests.
-" Do not call this function.
-function! ale#linter#GetLintersLoaded() abort
-    " This command will throw from the sandbox.
-    let &equalprg=&equalprg
-
-    return s:linters
-endfunction
-
 function! s:IsCallback(value) abort
     return type(a:value) == type('') || type(a:value) == type(function('type'))
 endfunction
@@ -68,7 +59,7 @@ function! s:LanguageGetter(buffer) dict abort
     return l:self.language
 endfunction
 
-function! ale#linter#PreProcess(filetype, linter) abort
+function! ale#linter#PreProcess(linter) abort
     if type(a:linter) != type({})
         throw 'The linter object must be a Dictionary'
     endif
@@ -202,20 +193,13 @@ function! ale#linter#PreProcess(filetype, linter) abort
     endif
 
     if l:needs_lsp_details
-        if has_key(a:linter, 'language_callback')
-            if has_key(a:linter, 'language')
+        if has_key(a:linter, 'language')
+            if has_key(a:linter, 'language_callback')
                 throw 'Only one of `language` or `language_callback` '
                 \   . 'should be set'
             endif
 
-            let l:obj.language_callback = get(a:linter, 'language_callback')
-
-            if !s:IsCallback(l:obj.language_callback)
-                throw '`language_callback` must be a callback for LSP linters'
-            endif
-        else
-            " Default to using the filetype as the language.
-            let l:obj.language = get(a:linter, 'language', a:filetype)
+            let l:obj.language = get(a:linter, 'language')
 
             if type(l:obj.language) != type('')
                 throw '`language` must be a string'
@@ -223,6 +207,12 @@ function! ale#linter#PreProcess(filetype, linter) abort
 
             " Make 'language_callback' return the 'language' value.
             let l:obj.language_callback = function('s:LanguageGetter')
+        else
+            let l:obj.language_callback = get(a:linter, 'language_callback')
+
+            if !s:IsCallback(l:obj.language_callback)
+                throw '`language_callback` must be a callback for LSP linters'
+            endif
         endif
 
         let l:obj.project_root_callback = get(a:linter, 'project_root_callback')
@@ -292,14 +282,11 @@ function! ale#linter#PreProcess(filetype, linter) abort
 endfunction
 
 function! ale#linter#Define(filetype, linter) abort
-    " This command will throw from the sandbox.
-    let &equalprg=&equalprg
-
     if !has_key(s:linters, a:filetype)
         let s:linters[a:filetype] = []
     endif
 
-    let l:new_linter = ale#linter#PreProcess(a:filetype, a:linter)
+    let l:new_linter = ale#linter#PreProcess(a:linter)
 
     call add(s:linters[a:filetype], l:new_linter)
 endfunction
@@ -310,12 +297,6 @@ function! ale#linter#PreventLoading(filetype) abort
 endfunction
 
 function! ale#linter#GetAll(filetypes) abort
-    " Don't return linters in the sandbox.
-    " Otherwise a sandboxed script could modify them.
-    if ale#util#InSandbox()
-        return []
-    endif
-
     let l:combined_linters = []
 
     for l:filetype in a:filetypes
