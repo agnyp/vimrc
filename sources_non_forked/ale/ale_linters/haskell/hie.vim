@@ -3,6 +3,10 @@
 
 call ale#Set('haskell_hie_executable', 'hie')
 
+function! ale_linters#haskell#hie#GetExecutable(buffer) abort
+    return ale#Var(a:buffer, 'haskell_hie_executable')
+endfunction
+
 function! ale_linters#haskell#hie#GetProjectRoot(buffer) abort
     " Search for the stack file first
     let l:project_file = ale#path#FindNearestFile(a:buffer, 'stack.yaml')
@@ -31,17 +35,10 @@ function! ale_linters#haskell#hie#GetProjectRoot(buffer) abort
     return l:project_file
 endfunction
 
-function! ale_linters#haskell#hie#GetCommand(buffer) abort
-    let l:executable = ale#Var(a:buffer, 'haskell_hie_executable')
-
-    return ale#handlers#haskell_stack#EscapeExecutable(l:executable, 'hie')
-\        . ' --lsp'
-endfunction
-
 call ale#linter#Define('haskell', {
 \   'name': 'hie',
 \   'lsp': 'stdio',
-\   'command_callback': 'ale_linters#haskell#hie#GetCommand',
-\   'executable_callback': ale#VarFunc('haskell_hie_executable'),
+\   'command': '%e --lsp',
+\   'executable_callback': 'ale_linters#haskell#hie#GetExecutable',
 \   'project_root_callback': 'ale_linters#haskell#hie#GetProjectRoot',
 \})
