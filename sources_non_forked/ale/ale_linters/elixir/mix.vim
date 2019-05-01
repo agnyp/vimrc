@@ -10,6 +10,7 @@ function! ale_linters#elixir#mix#Handle(buffer, lines) abort
     "
     " TODO: Warning format
     " warning: variable "foobar" does not exist and is being expanded to "foobar()", please use parentheses to remove the ambiguity or change the variable name
+
     let l:pattern = '\v\(([^\)]+Error)\) ([^:]+):([^:]+): (.+)$'
     let l:output = []
 
@@ -31,11 +32,9 @@ endfunction
 
 function! ale_linters#elixir#mix#FindProjectRoot(buffer) abort
     let l:mix_file = ale#path#FindNearestFile(a:buffer, 'mix.exs')
-
     if !empty(l:mix_file)
       return fnamemodify(l:mix_file, ':p:h')
     endif
-
     return '.'
 endfunction
 

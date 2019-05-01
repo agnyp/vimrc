@@ -284,21 +284,16 @@ endfunction
 
 " FUNCTION: s:Creator._setCommonBufOptions() {{{1
 function! s:Creator._setCommonBufOptions()
-
-    " Options for a non-file/control buffer.
-    setlocal bufhidden=hide
-    setlocal buftype=nofile
+    "throwaway buffer options
     setlocal noswapfile
-
-    " Options for controlling buffer/window appearance.
+    setlocal buftype=nofile
+    setlocal bufhidden=hide
+    setlocal nowrap
     setlocal foldcolumn=0
     setlocal foldmethod=manual
-    setlocal nobuflisted
     setlocal nofoldenable
-    setlocal nolist
+    setlocal nobuflisted
     setlocal nospell
-    setlocal nowrap
-
     if g:NERDTreeShowLineNumbers
         setlocal nu
     else
@@ -316,7 +311,6 @@ function! s:Creator._setCommonBufOptions()
 
     call self._setupStatusline()
     call self._bindMappings()
-
     setlocal filetype=nerdtree
 endfunction
 

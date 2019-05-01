@@ -116,39 +116,67 @@ function! s:TreeFileNode.findNode(path)
     return {}
 endfunction
 
-" FUNCTION: TreeFileNode.findSibling(direction) {{{1
-" Find the next or previous sibling of this node.
+" FUNCTION: TreeFileNode.findOpenDirSiblingWithVisibleChildren(direction) {{{1
+"
+" Finds the next sibling for this node in the indicated direction. This sibling
+" must be a directory and may/may not have children as specified.
 "
 " Args:
-" direction: 0 for previous, 1 for next
+" direction: 0 if you want to find the previous sibling, 1 for the next sibling
 "
 " Return:
-" The next/previous TreeFileNode object or an empty dictionary if not found.
+" a treenode object or {} if no appropriate sibling could be found
+function! s:TreeFileNode.findOpenDirSiblingWithVisibleChildren(direction)
+    " if we have no parent then we can have no siblings
+    if self.parent != {}
+        let nextSibling = self.findSibling(a:direction)
+
+        while nextSibling != {}
+            if nextSibling.path.isDirectory && nextSibling.hasVisibleChildren() && nextSibling.isOpen
+                return nextSibling
+            endif
+            let nextSibling = nextSibling.findSibling(a:direction)
+        endwhile
+    endif
+
+    return {}
+endfunction
+
+" FUNCTION: TreeFileNode.findSibling(direction) {{{1
+"
+" Finds the next sibling for this node in the indicated direction
+"
+" Args:
+" direction: 0 if you want to find the previous sibling, 1 for the next sibling
+"
+" Return:
+" a treenode object or {} if no sibling could be found
 function! s:TreeFileNode.findSibling(direction)
+    " if we have no parent then we can have no siblings
+    if self.parent != {}
 
-    " There can be no siblings if there is no parent.
-    if empty(self.parent)
-        return {}
-    endif
+        " get the index of this node in its parents children
+        let siblingIndx = self.parent.getChildIndex(self.path)
 
-    let l:nodeIndex = self.parent.getChildIndex(self.path)
+        if siblingIndx != -1
+            " move a long to the next potential sibling node
+            let siblingIndx = a:direction ==# 1 ? siblingIndx+1 : siblingIndx-1
 
-    if l:nodeIndex == -1
-        return {}
-    endif
+            " keep moving along to the next sibling till we find one that is valid
+            let numSiblings = self.parent.getChildCount()
+            while siblingIndx >= 0 && siblingIndx < numSiblings
 
-    " Get the next index to begin the search.
-    let l:nodeIndex += a:direction ? 1 : -1
+                " if the next node is not an ignored node (i.e. wont show up in the
+                " view) then return it
+                if self.parent.children[siblingIndx].path.ignore(self.getNerdtree()) ==# 0
+                    return self.parent.children[siblingIndx]
+                endif
 
-    while 0 <= l:nodeIndex && l:nodeIndex < self.parent.getChildCount()
-
-        " Return the next node if it is not ignored.
-        if !self.parent.children[l:nodeIndex].path.ignore(self.getNerdtree())
-            return self.parent.children[l:nodeIndex]
+                " go to next node
+                let siblingIndx = a:direction ==# 1 ? siblingIndx+1 : siblingIndx-1
+            endwhile
         endif
-
-        let l:nodeIndex += a:direction ? 1 : -1
-    endwhile
+    endif
 
     return {}
 endfunction

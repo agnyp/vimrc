@@ -3,7 +3,6 @@
 " Description: go build for Go files
 " inspired by work from dzhou121 <dzhou121@gmail.com>
 
-call ale#Set('go_go_executable', 'go')
 call ale#Set('go_gobuild_options', '')
 
 function! ale_linters#go#gobuild#GetCommand(buffer) abort
@@ -11,7 +10,7 @@ function! ale_linters#go#gobuild#GetCommand(buffer) abort
 
     " Run go test in local directory with relative path
     return ale#path#BufferCdString(a:buffer)
-    \   . ale#Var(a:buffer, 'go_go_executable') . ' test'
+    \   . 'go test'
     \   . (!empty(l:options) ? ' ' . l:options : '')
     \   . ' -c -o /dev/null ./'
 endfunction
@@ -22,6 +21,7 @@ function! ale_linters#go#gobuild#GetMatches(lines) abort
     " file.go:27: missing argument for Printf("%s"): format reads arg 2, have only 1 args
     " file.go:53:10: if block ends with a return statement, so drop this else and outdent its block (move short variable declaration to its own line if necessary)
     " file.go:5:2: expected declaration, found 'STRING' "log"
+
     " go test returns relative paths so use tail of filename as part of pattern matcher
     let l:pattern = '\v^([a-zA-Z]?:?[^:]+):(\d+):?(\d+)?:? (.+)$'
 
@@ -48,7 +48,7 @@ endfunction
 call ale#linter#Define('go', {
 \   'name': 'gobuild',
 \   'aliases': ['go build'],
-\   'executable_callback': ale#VarFunc('go_go_executable'),
+\   'executable': 'go',
 \   'command_callback': 'ale_linters#go#gobuild#GetCommand',
 \   'output_stream': 'stderr',
 \   'callback': 'ale_linters#go#gobuild#Handler',

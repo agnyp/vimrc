@@ -25,7 +25,6 @@ function! ale_linters#html#tidy#GetCommand(buffer) abort
     " On macOS, old tidy (released on 31 Oct 2006) is installed. It does not
     " consider HTML5 so we should avoid it.
     let l:executable = ale#Var(a:buffer, 'html_tidy_executable')
-
     if has('mac') && l:executable is# 'tidy' && exists('*exepath')
     \  && exepath(l:executable) is# '/usr/bin/tidy'
         return ''
@@ -41,6 +40,7 @@ endfunction
 function! ale_linters#html#tidy#Handle(buffer, lines) abort
     " Matches patterns lines like the following:
     " line 7 column 5 - Warning: missing </title> before </head>
+
     let l:pattern = '^line \(\d\+\) column \(\d\+\) - \(Warning\|Error\): \(.\+\)$'
     let l:output = []
 

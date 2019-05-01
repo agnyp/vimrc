@@ -3,8 +3,6 @@
 
 call ale#Set('ruby_reek_show_context', 0)
 call ale#Set('ruby_reek_show_wiki_link', 0)
-call ale#Set('ruby_reek_options', '')
-call ale#Set('ruby_reek_executable', 'reek')
 
 function! ale_linters#ruby#reek#VersionCheck(buffer) abort
     " If we have previously stored the version number in a cache, then
@@ -14,23 +12,18 @@ function! ale_linters#ruby#reek#VersionCheck(buffer) abort
         return ''
     endif
 
-    let l:executable = ale#Var(a:buffer, 'ruby_reek_executable')
-
-    return ale#handlers#ruby#EscapeExecutable(l:executable, 'reek')
-    \   . ' --version'
+    return 'reek --version'
 endfunction
 
 function! ale_linters#ruby#reek#GetCommand(buffer, version_output) abort
     let l:version = ale#semver#GetVersion('reek', a:version_output)
-    let l:executable = ale#Var(a:buffer, 'ruby_reek_executable')
 
     " Tell reek what the filename is if the version of reek is new enough.
     let l:display_name_args = ale#semver#GTE(l:version, [5, 0, 0])
     \   ? ' --stdin-filename %s'
     \   : ''
 
-    return ale#handlers#ruby#EscapeExecutable(l:executable, 'reek')
-    \   . ' -f json --no-progress --no-color'
+    return 'reek -f json --no-progress --no-color'
     \   . l:display_name_args
 endfunction
 
@@ -69,7 +62,7 @@ endfunction
 
 call ale#linter#Define('ruby', {
 \   'name': 'reek',
-\   'executable_callback': ale#VarFunc('ruby_reek_executable'),
+\   'executable': 'reek',
 \   'command_chain': [
 \       {'callback': 'ale_linters#ruby#reek#VersionCheck'},
 \       {'callback': 'ale_linters#ruby#reek#GetCommand'},

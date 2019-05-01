@@ -25,7 +25,6 @@ function! ale#list#IsQuickfixOpen() abort
             return 1
         endif
     endfor
-
     return 0
 endfunction
 
@@ -113,11 +112,9 @@ function! s:SetListsImpl(timer_id, buffer, loclist) abort
 
         " open windows vertically instead of default horizontally
         let l:open_type = ''
-
         if ale#Var(a:buffer, 'list_vertical') == 1
             let l:open_type = 'vert '
         endif
-
         if g:ale_set_quickfix
             if !ale#list#IsQuickfixOpen()
                 silent! execute l:open_type . 'copen ' . str2nr(ale#Var(a:buffer, 'list_window_size'))

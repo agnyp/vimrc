@@ -18,7 +18,6 @@ function! ale#fixers#phpcbf#Fix(buffer) abort
     let l:standard_option = !empty(l:standard)
     \   ? '--standard=' . l:standard
     \   : ''
-
     return {
     \   'command': ale#Escape(l:executable) . ' --stdin-path=%s ' . l:standard_option . ' -'
     \}

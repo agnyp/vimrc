@@ -16,7 +16,6 @@ function! ale_linters#java#javac#GetImportPaths(buffer) abort
     endif
 
     let l:classpath_command = ale#gradle#BuildClasspathCommand(a:buffer)
-
     if !empty(l:classpath_command)
         return l:classpath_command
     endif
@@ -91,6 +90,7 @@ function! ale_linters#java#javac#Handle(buffer, lines) abort
     "
     " Main.java:13: warning: [deprecation] donaught() in Testclass has been deprecated
     " Main.java:16: error: ';' expected
+
     let l:directory = expand('#' . a:buffer . ':p:h')
     let l:pattern = '\v^(.*):(\d+): (.+):(.+)$'
     let l:col_pattern = '\v^(\s*\^)$'

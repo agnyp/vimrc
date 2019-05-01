@@ -202,28 +202,8 @@ function! NERDTreeFocus()
 endfunction
 
 function! NERDTreeCWD()
-
-    if empty(getcwd())
-        call nerdtree#echoWarning('current directory does not exist')
-        return
-    endif
-
-    try
-        let l:cwdPath = g:NERDTreePath.New(getcwd())
-    catch /^NERDTree.InvalidArgumentsError/
-        call nerdtree#echoWarning('current directory does not exist')
-        return
-    endtry
-
     call NERDTreeFocus()
-
-    if b:NERDTree.root.path.equals(l:cwdPath)
-        return
-    endif
-
-    let l:newRoot = g:NERDTreeFileNode.New(l:cwdPath, b:NERDTree)
-    call b:NERDTree.changeRoot(l:newRoot)
-    normal! ^
+    call nerdtree#ui_glue#chRootCwd()
 endfunction
 
 function! NERDTreeAddPathFilter(callback)

@@ -14,7 +14,6 @@ endfunction
 
 function! ale#fixers#php_cs_fixer#Fix(buffer) abort
     let l:executable = ale#fixers#php_cs_fixer#GetExecutable(a:buffer)
-
     return {
     \   'command': ale#Escape(l:executable)
     \       . ' ' . ale#Var(a:buffer, 'php_cs_fixer_options')

@@ -1,13 +1,13 @@
 " Author: ynonp - https://github.com/ynonp, Eddie Lebow https://github.com/elebow
 " Description: RuboCop, a code style analyzer for Ruby files
 
-call ale#Set('ruby_rubocop_executable', 'rubocop')
-call ale#Set('ruby_rubocop_options', '')
-
 function! ale_linters#ruby#rubocop#GetCommand(buffer) abort
-    let l:executable = ale#Var(a:buffer, 'ruby_rubocop_executable')
+    let l:executable = ale#handlers#rubocop#GetExecutable(a:buffer)
+    let l:exec_args = l:executable =~? 'bundle$'
+    \   ? ' exec rubocop'
+    \   : ''
 
-    return ale#handlers#ruby#EscapeExecutable(l:executable, 'rubocop')
+    return ale#Escape(l:executable) . l:exec_args
     \   . ' --format json --force-exclusion '
     \   . ale#Var(a:buffer, 'ruby_rubocop_options')
     \   . ' --stdin ' . ale#Escape(expand('#' . a:buffer . ':p'))
@@ -55,7 +55,7 @@ endfunction
 
 call ale#linter#Define('ruby', {
 \   'name': 'rubocop',
-\   'executable_callback': ale#VarFunc('ruby_rubocop_executable'),
+\   'executable_callback': 'ale#handlers#rubocop#GetExecutable',
 \   'command_callback': 'ale_linters#ruby#rubocop#GetCommand',
 \   'callback': 'ale_linters#ruby#rubocop#Handle',
 \})

@@ -25,13 +25,7 @@ endfunction
 function! ale_linters#vim#ale_custom_linting_rules#GetCommand(buffer) abort
     let l:dir = s:GetALEProjectDir(a:buffer)
 
-    let l:temp_dir = ale#engine#CreateDirectory(a:buffer)
-    let l:temp_file = l:temp_dir . '/example.vim'
-
-    let l:lines = getbufline(a:buffer, 1, '$')
-    call ale#util#Writefile(a:buffer, l:lines, l:temp_file)
-
-    return ale#path#CdString(l:dir) . '%e ' . ale#Escape(l:temp_dir)
+    return ale#path#CdString(l:dir) . '%e .'
 endfunction
 
 function! ale_linters#vim#ale_custom_linting_rules#Handle(buffer, lines) abort
@@ -40,17 +34,15 @@ function! ale_linters#vim#ale_custom_linting_rules#Handle(buffer, lines) abort
     let l:pattern = '\v^([a-zA-Z]?:?[^:]+):(\d+) (.+)$'
 
     for l:match in ale#util#GetMatches(a:lines, l:pattern)
-        " Ignore trailing whitespace errors if we've turned them off.
-        if !ale#Var(a:buffer, 'warn_about_trailing_whitespace')
-        \&& l:match[3] is# 'Trailing whitespace'
-            continue
-        endif
+        let l:filename = ale#path#GetAbsPath(l:dir, l:match[1])
 
-        call add(l:output, {
-        \   'lnum': l:match[2],
-        \   'text': l:match[3],
-        \   'type': 'W',
-        \})
+        if bufnr(l:filename) is a:buffer
+            call add(l:output, {
+            \   'lnum': l:match[2],
+            \   'text': l:match[3],
+            \   'type': 'W',
+            \})
+        endif
     endfor
 
     return l:output
@@ -61,5 +53,5 @@ call ale#linter#Define('vim', {
 \   'executable_callback': 'ale_linters#vim#ale_custom_linting_rules#GetExecutable',
 \   'command_callback': 'ale_linters#vim#ale_custom_linting_rules#GetCommand',
 \   'callback': 'ale_linters#vim#ale_custom_linting_rules#Handle',
-\   'read_buffer': 0,
+\   'lint_file': 1,
 \})

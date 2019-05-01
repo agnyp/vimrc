@@ -40,7 +40,6 @@ function! ale_linters#terraform#tflint#GetCommand(buffer) abort
     endif
 
     let l:opts = ale#Var(a:buffer, 'terraform_tflint_options')
-
     if !empty(l:opts)
         let l:cmd .= ' ' . l:opts
     endif

@@ -2,7 +2,7 @@
 " Filename: autoload/lightline/colorscheme.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/09/01 22:48:24.
+" Last Change: 2017/11/29 12:54:05.
 " =============================================================================
 
 let s:save_cpo = &cpo
@@ -224,7 +224,7 @@ function! lightline#colorscheme#flatten(p) abort
   return a:p
 endfunction
 
-if has('gui_running') || (has('termguicolors') && &termguicolors)
+if has('gui_running')
   function! lightline#colorscheme#background() abort
     return &background
   endfunction

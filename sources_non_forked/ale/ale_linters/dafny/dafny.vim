@@ -13,7 +13,6 @@ function! ale_linters#dafny#dafny#Handle(buffer, lines) abort
         \    'type': l:match[4] =~# '^Error' ? 'E' : 'W'
         \ })
     endfor
-
     return l:output
 endfunction
 

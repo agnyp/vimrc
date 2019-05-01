@@ -17,7 +17,6 @@ function! ale#fixers#fixjson#Fix(buffer) abort
     let l:command = l:executable . ' --stdin-filename ' . l:filename
 
     let l:options = ale#Var(a:buffer, 'json_fixjson_options')
-
     if l:options isnot# ''
         let l:command .= ' ' . l:options
     endif

@@ -21,6 +21,5 @@ function! ale#handlers#go#Handler(buffer, lines) abort
         \   'type': 'E',
         \})
     endfor
-
     return l:output
 endfunction

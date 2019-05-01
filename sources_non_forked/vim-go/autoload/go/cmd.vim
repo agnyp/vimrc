@@ -31,12 +31,15 @@ function! go#cmd#Build(bang, ...) abort
         \ [".", "errors"]
 
   " Vim and Neovim async.
-  if go#util#has_job()
+  if go#util#has_job() || has('nvim')
+    if go#config#EchoCommandInfo()
+      call go#util#EchoProgress("building dispatched ...")
+    endif
+
     call s:cmd_job({
           \ 'cmd': ['go'] + args,
           \ 'bang': a:bang,
           \ 'for': 'GoBuild',
-          \ 'statustype': 'build'
           \})
 
   " Vim 7.4 without async
@@ -192,11 +195,14 @@ function! go#cmd#Install(bang, ...) abort
     " expand all wildcards(i.e: '%' to the current file name)
     let goargs = map(copy(a:000), "expand(v:val)")
 
+    if go#config#EchoCommandInfo()
+      call go#util#EchoProgress("installing dispatched ...")
+    endif
+
     call s:cmd_job({
           \ 'cmd': ['go', 'install', '-tags', go#config#BuildTags()] + goargs,
           \ 'bang': a:bang,
           \ 'for': 'GoInstall',
-          \ 'statustype': 'install'
           \})
     return
   endif
@@ -275,7 +281,16 @@ endfunction
 " | Vim job callbacks |
 " ---------------------
 
-function! s:cmd_job(args) abort
+function s:cmd_job(args) abort
+  let status_dir = expand('%:p:h')
+  let started_at = reltime()
+
+  call go#statusline#Update(status_dir, {
+        \ 'desc': "current status",
+        \ 'type': a:args.cmd[1],
+        \ 'state': "started",
+        \})
+
   " autowrite is not enabled for jobs
   call go#cmd#autowrite()
 
