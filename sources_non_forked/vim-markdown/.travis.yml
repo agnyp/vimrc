@@ -26,6 +26,7 @@ before_script: |
   fi
   if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     curl https://bootstrap.pypa.io/get-pip.py | sudo python
+    sudo -H easy_install pip
   fi
   sudo -H pip install virtualenv
 

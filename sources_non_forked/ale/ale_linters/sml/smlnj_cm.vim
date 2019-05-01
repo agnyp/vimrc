@@ -9,8 +9,7 @@ endfunction
 " Using CM requires that we set "lint_file: 1", since it reads the files
 " from the disk itself.
 call ale#linter#Define('sml', {
-\   'name': 'smlnj_cm',
-\   'aliases': ['smlnj-cm'],
+\   'name': 'smlnj-cm',
 \   'executable_callback': 'ale#handlers#sml#GetExecutableSmlnjCm',
 \   'lint_file': 1,
 \   'command_callback': 'ale_linters#sml#smlnj_cm#GetCommand',

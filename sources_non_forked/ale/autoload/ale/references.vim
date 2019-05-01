@@ -68,46 +68,37 @@ function! s:FindReferences(linter) abort
     let l:buffer = bufnr('')
     let [l:line, l:column] = getcurpos()[1:2]
 
-    if a:linter.lsp isnot# 'tsserver'
-        let l:column = min([l:column, len(getline(l:line))])
-    endif
+    let l:Callback = a:linter.lsp is# 'tsserver'
+    \   ? function('ale#references#HandleTSServerResponse')
+    \   : function('ale#references#HandleLSPResponse')
 
-    let l:lsp_details = ale#lsp_linter#StartLSP(l:buffer, a:linter)
+    let l:lsp_details = ale#lsp_linter#StartLSP(l:buffer, a:linter, l:Callback)
 
     if empty(l:lsp_details)
         return 0
     endif
 
     let l:id = l:lsp_details.connection_id
-    let l:root = l:lsp_details.project_root
 
-    function! OnReady(...) abort closure
-        let l:Callback = a:linter.lsp is# 'tsserver'
-        \   ? function('ale#references#HandleTSServerResponse')
-        \   : function('ale#references#HandleLSPResponse')
+    if a:linter.lsp is# 'tsserver'
+        let l:message = ale#lsp#tsserver_message#References(
+        \   l:buffer,
+        \   l:line,
+        \   l:column
+        \)
+    else
+        " Send a message saying the buffer has changed first, or the
+        " references position probably won't make sense.
+        call ale#lsp#NotifyForChanges(l:lsp_details)
 
-        call ale#lsp#RegisterCallback(l:id, l:Callback)
+        let l:column = min([l:column, len(getline(l:line))])
 
-        if a:linter.lsp is# 'tsserver'
-            let l:message = ale#lsp#tsserver_message#References(
-            \   l:buffer,
-            \   l:line,
-            \   l:column
-            \)
-        else
-            " Send a message saying the buffer has changed first, or the
-            " references position probably won't make sense.
-            call ale#lsp#NotifyForChanges(l:id, l:root, l:buffer)
+        let l:message = ale#lsp#message#References(l:buffer, l:line, l:column)
+    endif
 
-            let l:message = ale#lsp#message#References(l:buffer, l:line, l:column)
-        endif
+    let l:request_id = ale#lsp#Send(l:id, l:message, l:lsp_details.project_root)
 
-        let l:request_id = ale#lsp#Send(l:id, l:message, l:lsp_details.project_root)
-
-        let s:references_map[l:request_id] = {}
-    endfunction
-
-    call ale#lsp#WaitForCapability(l:id, l:root, 'references', function('OnReady'))
+    let s:references_map[l:request_id] = {}
 endfunction
 
 function! ale#references#Find() abort

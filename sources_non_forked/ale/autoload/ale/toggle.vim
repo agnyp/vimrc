@@ -43,7 +43,7 @@ function! ale#toggle#Toggle() abort
         call s:CleanupEveryBuffer()
         call s:DisablePostamble()
 
-        if exists('*ale#balloon#Disable')
+        if has('balloon_eval')
             call ale#balloon#Disable()
         endif
     endif

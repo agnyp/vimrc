@@ -27,6 +27,6 @@ call ale#linter#Define('clojure', {
 \   'name': 'joker',
 \   'output_stream': 'stderr',
 \   'executable': 'joker',
-\   'command': 'joker --working-dir %s --lint %t',
+\   'command': 'joker --lint %t',
 \   'callback': 'ale_linters#clojure#joker#HandleJokerFormat',
 \})

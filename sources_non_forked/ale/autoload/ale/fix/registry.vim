@@ -245,32 +245,32 @@ function! ale#fix#registry#Add(name, func, filetypes, desc, ...) abort
     " This command will throw from the sandbox.
     let &equalprg=&equalprg
 
-    if type(a:name) isnot v:t_string
+    if type(a:name) != type('')
         throw '''name'' must be a String'
     endif
 
-    if type(a:func) isnot v:t_string
+    if type(a:func) != type('')
         throw '''func'' must be a String'
     endif
 
-    if type(a:filetypes) isnot v:t_list
+    if type(a:filetypes) != type([])
         throw '''filetypes'' must be a List'
     endif
 
     for l:type in a:filetypes
-        if type(l:type) isnot v:t_string
+        if type(l:type) != type('')
             throw 'Each entry of ''filetypes'' must be a String'
         endif
     endfor
 
-    if type(a:desc) isnot v:t_string
+    if type(a:desc) != type('')
         throw '''desc'' must be a String'
     endif
 
     let l:aliases = get(a:000, 0, [])
 
-    if type(l:aliases) isnot v:t_list
-    \|| !empty(filter(copy(l:aliases), 'type(v:val) isnot v:t_string'))
+    if type(l:aliases) != type([])
+    \|| !empty(filter(copy(l:aliases), 'type(v:val) != type('''')'))
         throw '''aliases'' must be a List of String values'
     endif
 

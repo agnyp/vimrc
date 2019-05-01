@@ -1,4 +1,3 @@
-scriptencoding utf-8
 " Author rhysd https://rhysd.github.io/, Dirk Roorda (dirkroorda), Adrián González Rus (@adrigzr)
 " Description: remark-lint for Markdown files
 call ale#Set('markdown_remark_lint_executable', 'remark')
@@ -44,8 +43,7 @@ function! ale_linters#markdown#remark_lint#Handle(buffer, lines) abort
 endfunction
 
 call ale#linter#Define('markdown', {
-\   'name': 'remark_lint',
-\   'aliases': ['remark-lint'],
+\   'name': 'remark-lint',
 \   'executable_callback': 'ale_linters#markdown#remark_lint#GetExecutable',
 \   'command_callback': 'ale_linters#markdown#remark_lint#GetCommand',
 \   'callback': 'ale_linters#markdown#remark_lint#Handle',

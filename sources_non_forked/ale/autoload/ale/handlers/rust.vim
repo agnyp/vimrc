@@ -32,7 +32,7 @@ function! ale#handlers#rust#HandleRustErrors(buffer, lines) abort
 
         let l:error = json_decode(l:errorline)
 
-        if has_key(l:error, 'message') && type(l:error.message) is v:t_dict
+        if has_key(l:error, 'message') && type(l:error.message) == type({})
             let l:error = l:error.message
         endif
 

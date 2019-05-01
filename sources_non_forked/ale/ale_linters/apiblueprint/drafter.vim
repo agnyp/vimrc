@@ -31,6 +31,6 @@ call ale#linter#Define('apiblueprint', {
 \   'name': 'drafter',
 \   'output_stream': 'stderr',
 \   'executable': 'drafter',
-\   'command': 'drafter --use-line-num --validate',
+\   'command': 'drafter --use-line-num --validate %t',
 \   'callback': 'ale_linters#apiblueprint#drafter#HandleErrors',
 \})

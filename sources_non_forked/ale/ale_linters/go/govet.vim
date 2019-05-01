@@ -9,8 +9,7 @@ function! ale_linters#go#govet#GetCommand(buffer) abort
 endfunction
 
 call ale#linter#Define('go', {
-\   'name': 'govet',
-\   'aliases': ['go vet'],
+\   'name': 'go vet',
 \   'output_stream': 'stderr',
 \   'executable': 'go',
 \   'command_callback': 'ale_linters#go#govet#GetCommand',

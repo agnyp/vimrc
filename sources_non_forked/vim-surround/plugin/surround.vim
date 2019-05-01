@@ -263,16 +263,11 @@ function! s:wrap(string,char,type,removed,special)
     elseif keeper =~ '\n$' && after =~ '^\n'
       let after = strpart(after,1)
     endif
-    if keeper !~ '^\n' && before !~ '\n\s*$'
+    if before !~ '\n\s*$'
       let before .= "\n"
       if a:special
         let before .= "\t"
       endif
-    elseif keeper =~ '^\n' && before =~ '\n\s*$'
-      let keeper = strcharpart(keeper,1)
-    endif
-    if type ==# 'V' && keeper =~ '\n\s*\n$'
-      let keeper = strcharpart(keeper,0,strchars(keeper) - 1)
     endif
   endif
   if type ==# 'V'
