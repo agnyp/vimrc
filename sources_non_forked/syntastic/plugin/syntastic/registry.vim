@@ -103,7 +103,6 @@ let s:_DEFAULT_CHECKERS = {
         \ 'verilog':       ['verilator'],
         \ 'vhdl':          ['ghdl'],
         \ 'vim':           ['vimlint'],
-        \ 'vue':           ['pug_lint_vue', 'eslint'],
         \ 'xhtml':         ['tidy'],
         \ 'xml':           ['xmllint'],
         \ 'xslt':          ['xmllint'],
