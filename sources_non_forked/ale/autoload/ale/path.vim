@@ -65,11 +65,7 @@ endfunction
 " Output 'cd <directory> && '
 " This function can be used changing the directory for a linter command.
 function! ale#path#CdString(directory) abort
-    if has('win32')
-        return 'cd /d ' . ale#Escape(a:directory) . ' && '
-    else
-        return 'cd ' . ale#Escape(a:directory) . ' && '
-    endif
+    return 'cd ' . ale#Escape(a:directory) . ' && '
 endfunction
 
 " Output 'cd <buffer_filename_directory> && '

@@ -7,12 +7,11 @@ function! gitgutter#utility#supports_overscore_sign()
 endfunction
 
 function! gitgutter#utility#setbufvar(buffer, varname, val)
-  let buffer = +a:buffer
-  let dict = get(getbufvar(buffer, '', {}), 'gitgutter', {})
+  let dict = get(getbufvar(a:buffer, ''), 'gitgutter', {})
   let needs_setting = empty(dict)
   let dict[a:varname] = a:val
   if needs_setting
-    call setbufvar(buffer, 'gitgutter', dict)
+    call setbufvar(+a:buffer, 'gitgutter', dict)
   endif
 endfunction
 

@@ -24,7 +24,7 @@ if exists("*GoIndent")
   finish
 endif
 
-function! GoIndent(lnum) abort
+function! GoIndent(lnum)
   let prevlnum = prevnonblank(a:lnum-1)
   if prevlnum == 0
     " top of file
@@ -38,17 +38,10 @@ function! GoIndent(lnum) abort
 
   let ind = previ
 
-  for synid in synstack(a:lnum, 1)
-    if synIDattr(synid, 'name') == 'goRawString'
-      if prevl =~ '\%(\%(:\?=\)\|(\|,\)\s*`[^`]*$'
-        " previous line started a multi-line raw string
-        return 0
-      endif
-      " return -1 to keep the current indent.
-      return -1
-    endif
-  endfor
-
+  if prevl =~ ' = `[^`]*$'
+    " previous line started a multi-line raw string
+    return 0
+  endif
   if prevl =~ '[({]\s*$'
     " previous line opened a block
     let ind += shiftwidth()

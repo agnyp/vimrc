@@ -46,14 +46,11 @@ function! ale#preview#ShowSelection(item_list) abort
 
     " Create lines to display to users.
     for l:item in a:item_list
-        let l:match = get(l:item, 'match', '')
-
         call add(
         \   l:lines,
         \   l:item.filename
         \       . ':' . l:item.line
-        \       . ':' . l:item.column
-        \       . (!empty(l:match) ? ' ' . l:match : ''),
+        \       . ':' . l:item.column,
         \)
     endfor
 

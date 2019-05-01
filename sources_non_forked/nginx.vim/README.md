@@ -76,12 +76,8 @@ It also has auto-completion for location and server blocks with `location<tab>` 
 
 ## Installation
 
-### Pathogen
-```bash
-git clone https://github.com/chr4/nginx.vim ~/.vim/bundle/nginx.vim
-```
+Just plug it into your favorite Vim package manager:
 
-### Other (Plug, Dein.vim, Vundle)
 ```vim
 " Plug
 Plug 'chr4/nginx.vim'

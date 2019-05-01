@@ -99,8 +99,7 @@ function! s:TreeDirNode.displayString()
     let l:label = ''
     let l:cascade = self.getCascade()
     for l:dirNode in l:cascade
-        let l:next = l:dirNode.path.displayString()
-        let l:label .= l:label == '' ? l:next : substitute(l:next,'^.','','')
+        let l:label .= l:dirNode.path.displayString()
     endfor
 
     " Select the appropriate open/closed status indicator symbol.
@@ -305,11 +304,9 @@ function! s:TreeDirNode._glob(pattern, all)
         for l:file in l:globList
             let l:tail = fnamemodify(l:file, ':t')
 
-            " If l:file has a trailing slash, then its :tail will be ''. Use
-            " :h to drop the slash and the empty string after it; then use :t
-            " to get the directory name.
+            " Double the modifier if only a separator was stripped.
             if l:tail == ''
-                let l:tail = fnamemodify(l:file, ':h:t')
+                let l:tail = fnamemodify(l:file, ':t:t')
             endif
 
             if l:tail == '.' || l:tail == '..'

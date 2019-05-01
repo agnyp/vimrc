@@ -79,7 +79,6 @@ function! ale#engine#InitBufferInfo(buffer) abort
         let g:ale_buffer_info[a:buffer] = {
         \   'job_list': [],
         \   'active_linter_list': [],
-        \   'active_other_sources_list': [],
         \   'loclist': [],
         \   'temporary_file_list': [],
         \   'temporary_directory_list': [],
@@ -98,7 +97,6 @@ function! ale#engine#IsCheckingBuffer(buffer) abort
     let l:info = get(g:ale_buffer_info, a:buffer, {})
 
     return !empty(get(l:info, 'active_linter_list', []))
-    \   || !empty(get(l:info, 'active_other_sources_list', []))
 endfunction
 
 " Register a temporary file to be managed with the ALE engine for
@@ -179,27 +177,20 @@ function! s:GatherOutput(job_id, line) abort
     endif
 endfunction
 
-function! ale#engine#HandleLoclist(linter_name, buffer, loclist, from_other_source) abort
+function! ale#engine#HandleLoclist(linter_name, buffer, loclist) abort
     let l:info = get(g:ale_buffer_info, a:buffer, {})
 
     if empty(l:info)
         return
     endif
 
-    if !a:from_other_source
-        " Remove this linter from the list of active linters.
-        " This may have already been done when the job exits.
-        call filter(l:info.active_linter_list, 'v:val isnot# a:linter_name')
-    endif
+    " Remove this linter from the list of active linters.
+    " This may have already been done when the job exits.
+    call filter(l:info.active_linter_list, 'v:val isnot# a:linter_name')
 
     " Make some adjustments to the loclists to fix common problems, and also
     " to set default values for loclist items.
-    let l:linter_loclist = ale#engine#FixLocList(
-    \   a:buffer,
-    \   a:linter_name,
-    \   a:from_other_source,
-    \   a:loclist,
-    \)
+    let l:linter_loclist = ale#engine#FixLocList(a:buffer, a:linter_name, a:loclist)
 
     " Remove previous items for this linter.
     call filter(l:info.loclist, 'v:val.linter_name isnot# a:linter_name')
@@ -272,7 +263,7 @@ function! s:HandleExit(job_id, exit_code) abort
         let l:loclist = []
     endtry
 
-    call ale#engine#HandleLoclist(l:linter.name, l:buffer, l:loclist, 0)
+    call ale#engine#HandleLoclist(l:linter.name, l:buffer, l:loclist)
 endfunction
 
 function! ale#engine#SetResults(buffer, loclist) abort
@@ -344,7 +335,7 @@ function! s:RemapItemTypes(type_map, loclist) abort
     endfor
 endfunction
 
-function! ale#engine#FixLocList(buffer, linter_name, from_other_source, loclist) abort
+function! ale#engine#FixLocList(buffer, linter_name, loclist) abort
     let l:bufnr_map = {}
     let l:new_loclist = []
 
@@ -376,10 +367,6 @@ function! ale#engine#FixLocList(buffer, linter_name, from_other_source, loclist)
         \   'nr': get(l:old_item, 'nr', -1),
         \   'linter_name': a:linter_name,
         \}
-
-        if a:from_other_source
-            let l:item.from_other_source = 1
-        endif
 
         if has_key(l:old_item, 'code')
             let l:item.code = l:old_item.code
@@ -704,7 +691,6 @@ endfunction
 function! s:RemoveProblemsForDisabledLinters(buffer, linters) abort
     " Figure out which linters are still enabled, and remove
     " problems for linters which are no longer enabled.
-    " Problems from other sources will be kept.
     let l:name_map = {}
 
     for l:linter in a:linters
@@ -713,7 +699,7 @@ function! s:RemoveProblemsForDisabledLinters(buffer, linters) abort
 
     call filter(
     \   get(g:ale_buffer_info[a:buffer], 'loclist', []),
-    \   'get(v:val, ''from_other_source'') || get(l:name_map, get(v:val, ''linter_name''))',
+    \   'get(l:name_map, get(v:val, ''linter_name''))',
     \)
 endfunction
 
