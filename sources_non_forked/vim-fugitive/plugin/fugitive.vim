@@ -195,7 +195,7 @@ function! fugitive#detect(path) abort
       nnoremap <buffer> <silent> y<C-G> :call setreg(v:register, <SID>recall())<CR>
     endif
     let buffer = fugitive#buffer()
-    if expand('%:p') =~# '://'
+    if expand('%:p') =~# '//'
       call buffer.setvar('&path', s:sub(buffer.getvar('&path'), '^\.%(,|$)', ''))
     endif
     if stridx(buffer.getvar('&tags'), escape(b:git_dir, ', ')) == -1
@@ -700,11 +700,7 @@ function! s:Git(bang, args) abort
   let args = matchstr(a:args,'\v\C.{-}%($|\\@<!%(\\\\)*\|)@=')
   if exists(':terminal')
     let dir = s:repo().tree()
-    if expand('%') != ''
-      -tabedit %
-    else
-      -tabnew
-    endif
+    -tabedit %
     execute 'lcd' fnameescape(dir)
     execute 'terminal' git args
   else
@@ -2299,9 +2295,9 @@ function! s:Browse(bang,line1,count,...) abort
 
     if empty(remote)
       let remote = '.'
-      let raw = s:repo().git_chomp('remote','get-url','origin')
+      let raw = s:repo().git_chomp('config','remote.origin.url')
     else
-      let raw = s:repo().git_chomp('remote','get-url',remote)
+      let raw = s:repo().git_chomp('config','remote.'.remote.'.url')
     endif
     if raw ==# ''
       let raw = remote

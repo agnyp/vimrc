@@ -303,6 +303,7 @@ fu! s:match_window_opts()
 	let s:mw_res =
 		\ s:mw =~ 'results:[^,]\+' ? str2nr(matchstr(s:mw, 'results:\zs\d\+'))
 		\ : min([s:mw_max, &lines])
+	let s:mw_res = max([s:mw_res, 1])
 endf
 "}}}1
 " * Open & Close {{{1
@@ -1994,14 +1995,9 @@ fu! s:bufnrfilpath(line)
 	en
 	let filpath = fnamemodify(filpath, ':p')
 	let bufnr = bufnr('^'.filpath.'$')
-	if (!filereadable(filpath) && bufnr < 1)
-		if (a:line =~ '[\/]\?\[\d\+\*No Name\]$')
-			let bufnr = str2nr(matchstr(a:line, '[\/]\?\[\zs\d\+\ze\*No Name\]$'))
-			let filpath = bufnr
-		else
-			let bufnr = bufnr(a:line)
-			retu [bufnr, a:line]
-		en
+	if (a:line =~ '[\/]\?\[\d\+\*No Name\]$' && !filereadable(filpath) && bufnr < 1)
+		let bufnr = str2nr(matchstr(a:line, '[\/]\?\[\zs\d\+\ze\*No Name\]$'))
+		let filpath = bufnr
 	en
 	retu [bufnr, filpath]
 endf

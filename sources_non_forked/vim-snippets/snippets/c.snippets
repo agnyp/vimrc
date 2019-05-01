@@ -37,7 +37,7 @@ snippet ifdef
 # if
 snippet #if
 	#if ${1:FOO}
-		${0:${VISUAL}}
+		${0}
 	#endif
 # header include guard
 snippet once
@@ -53,23 +53,23 @@ snippet once
 # if
 snippet if
 	if (${1:true}) {
-		${0:${VISUAL}}
+		${0}
 	}
 snippet ife
 	if (${1:true}) {
-		${2:${VISUAL}}
+		${2}
 	} else {
 		${0}
 	}
 # else
 snippet el
 	else {
-		${0:${VISUAL}}
+		${0}
 	}
 # else if
 snippet elif
 	else if (${1:true}) {
-		${0:${VISUAL}}
+		${0}
 	}
 # ifi
 snippet ifi
@@ -115,12 +115,12 @@ snippet forr
 # while
 snippet wh
 	while (${1:/* condition */}) {
-		${0:${VISUAL}}
+		${2}
 	}
 # do... while
 snippet do
 	do {
-		${0:${VISUAL}}
+		${2}
 	} while (${1:/* condition */});
 ##
 ## Functions
