@@ -45,14 +45,9 @@ function! s:TreeDirNode.addChild(treenode, inOrder)
 endfunction
 
 " FUNCTION: TreeDirNode.close() {{{1
-" Mark this TreeDirNode as closed.
+" Closes this directory
 function! s:TreeDirNode.close()
-
-    " Close all directories in this directory node's cascade. This is
-    " necessary to ensure consistency when cascades are rendered.
-    for l:dirNode in self.getCascade()
-        let l:dirNode.isOpen = 0
-    endfor
+    let self.isOpen = 0
 endfunction
 
 " FUNCTION: TreeDirNode.closeChildren() {{{1
@@ -83,29 +78,19 @@ function! s:TreeDirNode.createChild(path, inOrder)
 endfunction
 
 " FUNCTION: TreeDirNode.displayString() {{{1
-" Assemble and return a string that can represent this TreeDirNode object in
-" the NERDTree window.
+unlet s:TreeDirNode.displayString
 function! s:TreeDirNode.displayString()
-    let l:result = ''
-
-    " Build a label that identifies this TreeDirNode.
-    let l:label = ''
-    let l:cascade = self.getCascade()
-    for l:dirNode in l:cascade
-        let l:label .= l:dirNode.path.displayString()
+    let cascade = self.getCascade()
+    let rv = ""
+    for node in cascade
+        let rv = rv . node.path.displayString()
     endfor
 
-    " Select the appropriate open/closed status indicator symbol.
-    if l:cascade[-1].isOpen
-        let l:symbol = g:NERDTreeDirArrowCollapsible
-    else
-        let l:symbol = g:NERDTreeDirArrowExpandable
-    endif
+    let sym = cascade[-1].isOpen ? g:NERDTreeDirArrowCollapsible : g:NERDTreeDirArrowExpandable
 
-    let l:flags = l:cascade[-1].path.flagSet.renderToString()
+    let flags = cascade[-1].path.flagSet.renderToString()
 
-    let l:result = l:symbol . ' ' . l:flags . l:label
-    return l:result
+    return sym . ' ' . flags . rv
 endfunction
 
 " FUNCTION: TreeDirNode.findNode(path) {{{1
@@ -415,39 +400,25 @@ function! s:TreeDirNode.New(path, nerdtree)
     return newTreeNode
 endfunction
 
-" FUNCTION: TreeDirNode.open([options]) {{{1
-" Open this directory node in the current tree or elsewhere if special options
-" are provided. Return 0 if options were processed. Otherwise, return the
-" number of new cached nodes.
+" FUNCTION: TreeDirNode.open([opts]) {{{1
+" Open the dir in the current tree or in a new tree elsewhere.
+"
+" If opening in the current tree, return the number of cached nodes.
+unlet s:TreeDirNode.open
 function! s:TreeDirNode.open(...)
-    let l:options = a:0 ? a:1 : {}
+    let opts = a:0 ? a:1 : {}
 
-    " If special options were specified, process them and return.
-    if has_key(l:options, 'where') && !empty(l:options['where'])
-        let l:opener = g:NERDTreeOpener.New(self.path, l:options)
-        call l:opener.open(self)
-        return 0
-    endif
-
-    " Open any ancestors of this node that render within the same cascade.
-    let l:parent = self.parent
-    while !empty(l:parent) && !l:parent.isRoot()
-        if index(l:parent.getCascade(), self) >= 0
-            let l:parent.isOpen = 1
-            let l:parent = l:parent.parent
+    if has_key(opts, 'where') && !empty(opts['where'])
+        let opener = g:NERDTreeOpener.New(self.path, opts)
+        call opener.open(self)
+    else
+        let self.isOpen = 1
+        if self.children ==# []
+            return self._initChildren(0)
         else
-            break
+            return 0
         endif
-    endwhile
-
-    let self.isOpen = 1
-
-    let l:numChildrenCached = 0
-    if empty(self.children)
-        let l:numChildrenCached = self._initChildren(0)
     endif
-
-    return l:numChildrenCached
 endfunction
 
 " FUNCTION: TreeDirNode.openAlong([opts]) {{{1
@@ -492,16 +463,35 @@ function! s:TreeDirNode._openInNewTab()
 endfunction
 
 " FUNCTION: TreeDirNode.openRecursively() {{{1
-" Open this directory node and any descendant directory nodes whose pathnames
-" are not ignored.
+" Opens this treenode and all of its children whose paths arent 'ignored'
+" because of the file filters.
+"
+" This method is actually a wrapper for the OpenRecursively2 method which does
+" the work.
 function! s:TreeDirNode.openRecursively()
-    silent call self.open()
+    call self._openRecursively2(1)
+endfunction
 
-    for l:child in self.children
-        if l:child.path.isDirectory && !l:child.path.ignore(l:child.getNerdtree())
-            call l:child.openRecursively()
+" FUNCTION: TreeDirNode._openRecursively2() {{{1
+" Opens this all children of this treenode recursively if either:
+"   *they arent filtered by file filters
+"   *a:forceOpen is 1
+"
+" Args:
+" forceOpen: 1 if this node should be opened regardless of file filters
+function! s:TreeDirNode._openRecursively2(forceOpen)
+    if self.path.ignore(self.getNerdtree()) ==# 0 || a:forceOpen
+        let self.isOpen = 1
+        if self.children ==# []
+            call self._initChildren(1)
         endif
-    endfor
+
+        for i in self.children
+            if i.path.isDirectory ==# 1
+                call i._openRecursively2(0)
+            endif
+        endfor
+    endif
 endfunction
 
 " FUNCTION: TreeDirNode.refresh() {{{1
