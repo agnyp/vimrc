@@ -1,7 +1,3 @@
-" don't spam the user when Vim is started in Vi compatibility mode
-let s:cpo_save = &cpo
-set cpo&vim
-
 function! go#decls#Decls(mode, ...) abort
   let decls_mode = go#config#DeclsMode()
   if decls_mode == 'ctrlp'
@@ -18,9 +14,5 @@ function! go#decls#Decls(mode, ...) abort
     end
   end
 endfunction
-
-" restore Vi compatibility settings
-let &cpo = s:cpo_save
-unlet s:cpo_save
 
 " vim: sw=2 ts=2 et

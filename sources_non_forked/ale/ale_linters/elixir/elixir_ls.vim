@@ -1,8 +1,7 @@
 " Author: Jon Parise <jon@indelible.org>
-" Description: ElixirLS integration (https://github.com/JakeBecker/elixir-ls)
+" Description: elixir-ls integration (https://github.com/JakeBecker/elixir-ls)
 
 call ale#Set('elixir_elixir_ls_release', 'elixir-ls')
-call ale#Set('elixir_elixir_ls_config', {})
 
 function! ale_linters#elixir#elixir_ls#GetExecutable(buffer) abort
     let l:dir = ale#path#Simplify(ale#Var(a:buffer, 'elixir_elixir_ls_release'))
@@ -16,6 +15,5 @@ call ale#linter#Define('elixir', {
 \   'lsp': 'stdio',
 \   'executable_callback': 'ale_linters#elixir#elixir_ls#GetExecutable',
 \   'command_callback': 'ale_linters#elixir#elixir_ls#GetExecutable',
-\   'project_root_callback': 'ale#handlers#elixir#FindMixUmbrellaRoot',
-\   'lsp_config_callback': ale#VarFunc('elixir_elixir_ls_config'),
+\   'project_root_callback': 'ale#handlers#elixir#FindMixProjectRoot',
 \})

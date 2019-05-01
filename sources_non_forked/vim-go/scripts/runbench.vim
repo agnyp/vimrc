@@ -1,9 +1,4 @@
 " vint: -ProhibitSetNoCompatible
-
-" don't spam the user when Vim is started in Vi compatibility mode
-let s:cpo_save = &cpo
-set cpo&vim
-
 set nocompatible nomore shellslash encoding=utf-8 shortmess+=WIF
 lang mess C
 
@@ -29,9 +24,3 @@ let s:report = execute('syntime report')
 execute ':e ' . fnameescape($RUNBENCH_OUT)
 call setline('.', split(s:report, '\n'))
 wq
-
-" restore Vi compatibility settings
-let &cpo = s:cpo_save
-unlet s:cpo_save
-
-" vim: sw=2 ts=2 et

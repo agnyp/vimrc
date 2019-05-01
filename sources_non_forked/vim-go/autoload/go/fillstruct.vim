@@ -1,7 +1,3 @@
-" don't spam the user when Vim is started in Vi compatibility mode
-let s:cpo_save = &cpo
-set cpo&vim
-
 function! go#fillstruct#FillStruct() abort
   let l:cmd = ['fillstruct',
       \ '-file', bufname(''),
@@ -64,9 +60,5 @@ function! go#fillstruct#FillStruct() abort
     call setpos('.', l:pos)
   endtry
 endfunction
-
-" restore Vi compatibility settings
-let &cpo = s:cpo_save
-unlet s:cpo_save
 
 " vim: sw=2 ts=2 et

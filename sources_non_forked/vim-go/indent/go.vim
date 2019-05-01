@@ -24,10 +24,6 @@ if exists("*GoIndent")
   finish
 endif
 
-" don't spam the user when Vim is started in Vi compatibility mode
-let s:cpo_save = &cpo
-set cpo&vim
-
 function! GoIndent(lnum) abort
   let prevlnum = prevnonblank(a:lnum-1)
   if prevlnum == 0
@@ -78,9 +74,5 @@ function! GoIndent(lnum) abort
 
   return ind
 endfunction
-
-" restore Vi compatibility settings
-let &cpo = s:cpo_save
-unlet s:cpo_save
 
 " vim: sw=2 ts=2 et

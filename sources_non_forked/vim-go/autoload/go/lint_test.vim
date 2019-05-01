@@ -1,7 +1,3 @@
-" don't spam the user when Vim is started in Vi compatibility mode
-let s:cpo_save = &cpo
-set cpo&vim
-
 func! Test_Gometa() abort
   let $GOPATH = fnameescape(fnamemodify(getcwd(), ':p')) . 'test-fixtures/lint'
   silent exe 'e ' . $GOPATH . '/src/lint/lint.go'
@@ -15,7 +11,7 @@ func! Test_Gometa() abort
 
   let g:go_metalinter_enabled = ['golint']
 
-  call go#lint#Gometa(0, 0, $GOPATH . '/src/foo')
+  call go#lint#Gometa(0, $GOPATH . '/src/foo')
 
   let actual = getqflist()
   let start = reltime()
@@ -41,7 +37,7 @@ func! Test_GometaWithDisabled() abort
 
   let g:go_metalinter_disabled = ['vet']
 
-  call go#lint#Gometa(0, 0, $GOPATH . '/src/foo')
+  call go#lint#Gometa(0, $GOPATH . '/src/foo')
 
   let actual = getqflist()
   let start = reltime()
@@ -69,7 +65,7 @@ func! Test_GometaAutoSave() abort
 
   let g:go_metalinter_autosave_enabled = ['golint']
 
-  call go#lint#Gometa(0, 1)
+  call go#lint#Gometa(1)
 
   let actual = getloclist(l:winnr)
   let start = reltime()
@@ -108,9 +104,5 @@ func! Test_Vet()
 
   call gotest#assert_quickfix(actual, expected)
 endfunc
-
-" restore Vi compatibility settings
-let &cpo = s:cpo_save
-unlet s:cpo_save
 
 " vim: sw=2 ts=2 et

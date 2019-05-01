@@ -2,17 +2,16 @@
 " Filename: autoload/lightline.vim
 " Author: itchyny
 " License: MIT License
-" Last Change: 2018/11/24 12:00:00.
+" Last Change: 2018/09/17 12:00:00.
 " =============================================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-let s:_ = 1 " 1: uninitialized, 2: disabled
+let s:_ = 1
 
 function! lightline#update() abort
   if s:_
-    if s:_ == 2 | return | endif
     call lightline#init()
     call lightline#colorscheme()
   endif
@@ -41,8 +40,11 @@ function! lightline#update_disable() abort
 endfunction
 
 function! lightline#enable() abort
-  let s:_ = 1
+  call lightline#colorscheme()
   call lightline#update()
+  if s:lightline.enable.tabline
+    set tabline=%!lightline#tabline()
+  endif
   augroup lightline
     autocmd!
     autocmd WinEnter,BufWinEnter,FileType,SessionLoadPost * call lightline#update()
@@ -72,7 +74,6 @@ function! lightline#disable() abort
     autocmd!
     autocmd WinEnter * call lightline#update_disable()
   augroup END
-  let s:_ = 2
 endfunction
 
 function! lightline#toggle() abort
