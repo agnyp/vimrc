@@ -18,11 +18,10 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! SyntaxCheckers_xquery_basex_GetLocList() dict
-    let buf = bufnr('')
     let makeprg = self.makeprgBuild({
         \ 'args_after': '-z',
         \ 'fname_before': '-q',
-        \ 'fname': syntastic#util#shescape('inspect:module("' . escape(fnamemodify(bufname(buf), ':p'), '"') . '")') })
+        \ 'fname': syntastic#util#shescape('inspect:module("' . escape(expand('%:p', 1), '"') . '")') })
 
     let errorformat =
         \ '%f:%l:%c:%t:%n:%m,' .

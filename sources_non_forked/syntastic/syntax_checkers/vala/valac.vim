@@ -44,17 +44,19 @@ endfunction " }}}1
 " Utilities {{{1
 
 function! s:GetValaOpts(buf, name, comment, cmd) " {{{2
-    let var = syntastic#util#bufVar(a:buf, 'vala_' . a:name)
+    let var = syntastic#util#var('vala_' . a:name)
     if type(var) == type([])
         let opts = map(copy(var), 'syntastic#util#shescape(v:val)')
     elseif type(var) == type('')
         if var !=# ''
-            let opts = split(var, '\m\s\+')
+            let opts = split(var, '\s\+')
         else
             let opts = []
             for line in filter(getbufline(a:buf, 1, 100), 'v:val =~# ' . string('\m^//\s\+' . a:comment . ':\s*'))
-                call extend(opts, split( matchstr(line, '\m^//\s\+' . a:comment . ':\s*\zs.*'), '\m\s\+' ))
+                call extend(opts, split( matchstr(line, '\m^//\s\+' . a:comment . ':\s*\zs.*'), '\s\+' ))
             endfor
+
+            call map( filter(opts, 'v:val !=# ""'), 'syntastic#util#shescape(v:val)' )
         endif
     else
         call syntastic#log#error('syntastic_vala_' . a:name . ' must be either a list, or a string')

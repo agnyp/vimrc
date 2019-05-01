@@ -44,8 +44,6 @@ function! SyntaxCheckers_vim_vimlint_IsAvailable() dict " {{{1
 endfunction " }}}1
 
 function! SyntaxCheckers_vim_vimlint_GetLocList() dict " {{{1
-    let buf = bufnr('')
-
     " EVL102: unused variable v
     " EVL103: unused argument v
     " EVL104: variable may not be initialized on some execution path: v
@@ -69,15 +67,17 @@ function! SyntaxCheckers_vim_vimlint_GetLocList() dict " {{{1
         \ 'EVL204': 3,
         \ 'EVL205': 3 }
 
-    let opts = syntastic#util#bufVar(buf, 'vimlint_options')
-    if type(opts) == type({})
-        let options = filter(copy(opts), 'v:key =~# "\\m^EVL"')
-        call extend(param, options, 'force')
+    if exists('g:syntastic_vimlint_options') || exists('b:syntastic_vimlint_options')
+        let opts = syntastic#util#var('vimlint_options')
+        if type(opts) == type({})
+            let options = filter(copy(opts), 'v:key =~# "\\m^EVL"')
+            call extend(param, options, 'force')
+        endif
     endif
 
     call self.log('options =', param)
 
-    return vimlint#vimlint(bufname(buf), param)
+    return vimlint#vimlint(expand('%', 1), param)
 endfunction " }}}1
 
 " Utilities {{{1

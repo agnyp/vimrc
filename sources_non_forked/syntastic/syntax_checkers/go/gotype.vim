@@ -19,9 +19,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! SyntaxCheckers_go_gotype_GetLocList() dict
-    let buf = bufnr('')
     let makeprg = self.makeprgBuild({
-        \ 'args': (bufname(buf) =~# '\m_test\.go$' ? '-a' : ''),
+        \ 'args': (expand('%', 1) =~# '\m_test\.go$' ? '-a' : ''),
         \ 'fname': '.' })
 
     let errorformat =
@@ -35,7 +34,7 @@ function! SyntaxCheckers_go_gotype_GetLocList() dict
     return SyntasticMake({
         \ 'makeprg': makeprg,
         \ 'errorformat': errorformat,
-        \ 'cwd': fnamemodify(bufname(buf), ':p:h'),
+        \ 'cwd': expand('%:p:h', 1),
         \ 'defaults': {'type': 'e'} })
 endfunction
 

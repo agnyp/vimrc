@@ -25,13 +25,11 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! SyntaxCheckers_erlang_escript_GetLocList() dict
-    let buf = bufnr('')
-
-    if fnamemodify(bufname(buf), ':e') ==# 'hrl'
+    if expand('%:e', 1) ==# 'hrl'
         return []
     endif
 
-    let shebang = syntastic#util#parseShebang(buf)
+    let shebang = syntastic#util#parseShebang()
     if shebang['exe'] ==# 'escript'
         let args = '-s'
         let post_args = ''
@@ -41,7 +39,7 @@ function! SyntaxCheckers_erlang_escript_GetLocList() dict
     endif
     let makeprg = self.makeprgBuild({
         \ 'args_after': args,
-        \ 'fname': syntastic#util#shexpand(fnamemodify(bufname(buf), ':p')),
+        \ 'fname': syntastic#util#shexpand('%:p'),
         \ 'post_args_after': post_args })
 
     let errorformat =

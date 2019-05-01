@@ -31,8 +31,7 @@ function! SyntaxCheckers_eruby_ruby_GetLocList() dict
         let s:ruby_new = syntastic#util#versionIsAtLeast(self.getVersion(), [1, 9])
     endif
 
-    let buf = bufnr('')
-    let fname = "'" . escape(bufname(buf), "\\'") . "'"
+    let fname = "'" . escape(expand('%', 1), "\\'") . "'"
 
     " TODO: encodings became useful in ruby 1.9 :)
     if s:ruby_new
@@ -70,7 +69,7 @@ function! SyntaxCheckers_eruby_ruby_GetLocList() dict
         \ 'makeprg': makeprg,
         \ 'errorformat': errorformat,
         \ 'env': env,
-        \ 'defaults': { 'bufnr': buf, 'vcol': 1 } })
+        \ 'defaults': { 'bufnr': bufnr(''), 'vcol': 1 } })
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({

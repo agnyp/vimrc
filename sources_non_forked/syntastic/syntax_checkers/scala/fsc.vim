@@ -24,10 +24,9 @@ function! SyntaxCheckers_scala_fsc_GetLocList() dict
     " fsc has some serious problems with the
     " working directory changing after being started
     " that's why we better pass an absolute path
-    let buf = bufnr('')
     let makeprg = self.makeprgBuild({
         \ 'args': '-Ystop-after:parser',
-        \ 'fname': syntastic#util#shescape(fnamemodify(bufname(buf), ':p')) })
+        \ 'fname': syntastic#util#shexpand('%:p') })
 
     let errorformat =
         \ '%E%f:%l: %trror: %m,' .

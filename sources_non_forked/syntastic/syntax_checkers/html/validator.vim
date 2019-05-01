@@ -31,8 +31,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! SyntaxCheckers_html_validator_GetLocList() dict
-    let buf = bufnr('')
-    let fname = syntastic#util#shescape(fnamemodify(bufname(buf), ':p'))
+    let fname = syntastic#util#shexpand('%')
     let makeprg = self.getExecEscaped() . ' -q -L -s --compressed -F out=gnu -F asciiquotes=yes' .
         \ (g:syntastic_html_validator_parser !=# '' ? ' -F parser=' . g:syntastic_html_validator_parser : '') .
         \ (g:syntastic_html_validator_nsfilter !=# '' ? ' -F nsfilter=' . g:syntastic_html_validator_nsfilter : '') .

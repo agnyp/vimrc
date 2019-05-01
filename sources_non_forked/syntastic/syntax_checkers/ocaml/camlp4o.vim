@@ -44,8 +44,7 @@ function! SyntaxCheckers_ocaml_camlp4o_IsAvailable() dict " {{{1
 endfunction " }}}1
 
 function! SyntaxCheckers_ocaml_camlp4o_GetLocList() dict " {{{1
-    let buf = bufnr('')
-    let makeprg = s:GetMakeprg(buf)
+    let makeprg = s:GetMakeprg()
     if makeprg ==# ''
         return []
     endif
@@ -66,7 +65,7 @@ function! SyntaxCheckers_ocaml_camlp4o_GetLocList() dict " {{{1
     let loclist = SyntasticMake({
         \ 'makeprg': makeprg,
         \ 'errorformat': errorformat,
-        \ 'defaults': {'bufnr': buf} })
+        \ 'defaults': {'bufnr': bufnr('')} })
 
     for e in loclist
         if get(e, 'col', 0) && get(e, 'nr', 0)
@@ -80,41 +79,40 @@ endfunction " }}}1
 
 " Utilities {{{1
 
-function! s:GetMakeprg(buf) " {{{2
+function! s:GetMakeprg() " {{{2
     return
         \ g:syntastic_ocaml_use_ocamlc ? g:syntastic_ocaml_use_ocamlc :
-        \ (g:syntastic_ocaml_use_ocamlbuild && isdirectory('_build')) ? s:GetOcamlcMakeprg(a:buf) :
-        \ s:GetOtherMakeprg(a:buf)
+        \ (g:syntastic_ocaml_use_ocamlbuild && isdirectory('_build')) ? s:GetOcamlcMakeprg() :
+        \ s:GetOtherMakeprg()
 endfunction " }}}2
 
-function! s:GetOcamlcMakeprg(buf) " {{{2
+function! s:GetOcamlcMakeprg() " {{{2
     let build_cmd = g:syntastic_ocaml_use_janestreet_core ?
         \ 'ocamlc -I ' . syntastic#util#shexpand(g:syntastic_ocaml_janestreet_core_dir) : 'ocamlc'
-    let build_cmd .= ' -c ' . syntastic#util#shescape(bufname(a:buf))
+    let build_cmd .= ' -c ' . syntastic#util#shexpand('%')
     return build_cmd
 endfunction " }}}2
 
-function! s:GetOcamlBuildMakeprg(buf) " {{{2
+function! s:GetOcamlBuildMakeprg() " {{{2
     return 'ocamlbuild -quiet -no-log -tag annot,' . s:ocamlpp . ' -no-links -no-hygiene -no-sanitize ' .
-        \ syntastic#util#shexpand(fnamemodify(bufname(a:buf), ':r')) . '.cmi'
+        \ syntastic#util#shexpand('%:r') . '.cmi'
 endfunction " }}}2
 
-function! s:GetOtherMakeprg(buf) " {{{2
+function! s:GetOtherMakeprg() " {{{2
     "TODO: give this function a better name?
     "
     "TODO: should use throw/catch instead of returning an empty makeprg
 
-    let fname = bufname(a:buf)
-    let extension = fnamemodify(fname, ':e')
+    let extension = expand('%:e', 1)
     let makeprg = ''
 
     if stridx(extension, 'mly') >= 0 && executable('menhir')
         " ocamlyacc output can't be redirected, so use menhir
-        let makeprg = 'menhir --only-preprocess ' . syntastic#util#shescape(fname) . ' >' . syntastic#util#DevNull()
+        let makeprg = 'menhir --only-preprocess ' . syntastic#util#shexpand('%') . ' >' . syntastic#util#DevNull()
     elseif stridx(extension,'mll') >= 0 && executable('ocamllex')
-        let makeprg = 'ocamllex -q ' . syntastic#c#NullOutput() . ' ' . syntastic#util#shescape(fname)
+        let makeprg = 'ocamllex -q ' . syntastic#c#NullOutput() . ' ' . syntastic#util#shexpand('%')
     else
-        let makeprg = 'camlp4o ' . syntastic#c#NullOutput() . ' ' . syntastic#util#shescape(fname)
+        let makeprg = 'camlp4o ' . syntastic#c#NullOutput() . ' ' . syntastic#util#shexpand('%')
     endif
 
     return makeprg
