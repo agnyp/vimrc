@@ -78,7 +78,7 @@ set langmenu=en
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 
-" Turn on the Wild menu
+" Turn on the WiLd menu
 set wildmenu
 
 " Ignore compiled files
