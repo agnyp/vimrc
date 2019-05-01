@@ -1,6 +1,6 @@
 "============================================================================
 "File:        pyang.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Authors:     joshua.downer@gmail.com
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute

@@ -73,7 +73,7 @@ function! go#path#Detect() abort
   let gopath = go#path#Default()
 
   " don't lookup for godeps if autodetect is disabled.
-  if !get(g:, "go_autodetect_gopath", 0)
+  if !get(g:, "go_autodetect_gopath", 1)
     return gopath
   endif
 
@@ -179,6 +179,7 @@ function! go#path#CheckBinPath(binpath) abort
   " just get the basename
   let basename = fnamemodify(binpath, ":t")
   if !executable(basename)
+
     call go#util#EchoError(printf("could not find '%s'. Run :GoInstallBinaries to fix it", basename))
 
     " restore back!

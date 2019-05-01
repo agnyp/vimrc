@@ -1,6 +1,6 @@
 "============================================================================
 "File:        flake8.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Authors:     Sylvain Soliman <Sylvain dot Soliman+git at gmail dot com>
 "             kstep <me@kstep.me>
 "

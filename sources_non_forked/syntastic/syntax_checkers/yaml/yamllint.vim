@@ -1,6 +1,6 @@
 "============================================================================
 "File:        yamllint.vim
-"Description: YAML files linting for syntastic
+"Description: YAML files linting for syntastic.vim
 "Maintainer:  Adrien Vergé
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute

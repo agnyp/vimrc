@@ -57,5 +57,3 @@ endfunction
 function! s:chomp(string)
     return substitute(a:string, '\n\+$', '', '')
 endfunction
-
-" vim: sw=2 ts=2 et

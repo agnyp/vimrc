@@ -168,7 +168,7 @@ function! go#def#jump_to_declaration(out, mode, bin_name) abort
       endif
 
       " open the file and jump to line and column
-      exec cmd fnameescape(fnamemodify(filename, ':.'))
+      exec cmd fnameescape(filename)
     endif
   endif
   call cursor(line, col)

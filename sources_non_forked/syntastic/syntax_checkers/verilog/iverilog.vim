@@ -1,6 +1,6 @@
 "============================================================================
 "File:        iverilog.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Psidium <psiidium at gmail dot com>
 "License:     The MIT License
 "============================================================================

@@ -77,7 +77,6 @@ function! go#term#newmode(bang, cmd, mode) abort
   call jobresize(id, width, height)
 
   let s:jobs[id] = job
-  stopinsert
   return id
 endfunction
 
@@ -105,7 +104,7 @@ function! s:on_exit(job_id, exit_status, event) dict abort
   endif
   let job = s:jobs[a:job_id]
 
-  let l:listtype = go#list#Type("_term")
+  let l:listtype = "locationlist"
 
   " usually there is always output so never branch into this clause
   if empty(job.stdout)

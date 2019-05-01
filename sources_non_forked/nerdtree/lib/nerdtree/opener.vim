@@ -126,29 +126,38 @@ function! s:Opener._isWindowUsable(winnumber)
 endfunction
 
 " FUNCTION: Opener.New(path, opts) {{{1
-" Instantiate a new NERDTreeOpener object.
 " Args:
-" a:path: the path object that is to be opened
-" a:opts: a dictionary containing the following optional keys...
-"   'where': specifies whether the node should be opened in new split, in
-"            a new tab or, in the last window; takes values "v", "h", or "t"
-"   'reuse': if file is already shown in a window, jump there; takes values
-"            "all", "currenttab", or empty
-"   'keepopen': boolean (0 or 1); if true, the tree window will not be closed
-"   'stay': boolean (0 or 1); if true, remain in tree window after opening
+"
+" a:path: The path object that is to be opened.
+"
+" a:opts:
+"
+" A dictionary containing the following keys (all optional):
+"   'where': Specifies whether the node should be opened in new split/tab or in
+"            the previous window. Can be either 'v' or 'h' or 't' (for open in
+"            new tab)
+"   'reuse': if a window is displaying the file then jump the cursor there. Can
+"            'all', 'currenttab' or empty to not reuse.
+"   'keepopen': dont close the tree window
+"   'stay': open the file, but keep the cursor in the tree win
 function! s:Opener.New(path, opts)
-    let l:newOpener = copy(self)
+    let newObj = copy(self)
 
-    let l:newOpener._keepopen = nerdtree#has_opt(a:opts, 'keepopen')
-    let l:newOpener._nerdtree = b:NERDTree
-    let l:newOpener._path = a:path
-    let l:newOpener._reuse = has_key(a:opts, 'reuse') ? a:opts['reuse'] : ''
-    let l:newOpener._stay = nerdtree#has_opt(a:opts, 'stay')
-    let l:newOpener._where = has_key(a:opts, 'where') ? a:opts['where'] : ''
+    let newObj._path = a:path
+    let newObj._stay = nerdtree#has_opt(a:opts, 'stay')
 
-    call l:newOpener._saveCursorPos()
+    if has_key(a:opts, 'reuse')
+        let newObj._reuse = a:opts['reuse']
+    else
+        let newObj._reuse = ''
+    endif
 
-    return l:newOpener
+    let newObj._keepopen = nerdtree#has_opt(a:opts, 'keepopen')
+    let newObj._where = has_key(a:opts, 'where') ? a:opts['where'] : ''
+    let newObj._nerdtree = b:NERDTree
+    call newObj._saveCursorPos()
+
+    return newObj
 endfunction
 
 " FUNCTION: Opener._newSplit() {{{1
@@ -233,40 +242,33 @@ endfunction
 
 " FUNCTION: Opener.open(target) {{{1
 function! s:Opener.open(target)
-
     if self._path.isDirectory
         call self._openDirectory(a:target)
-        return
+    else
+        call self._openFile()
     endif
-
-    call self._openFile()
 endfunction
 
 " FUNCTION: Opener._openFile() {{{1
 function! s:Opener._openFile()
-
     if self._reuseWindow()
         return
     endif
 
     call self._gotoTargetWin()
-
-    if self._stay
-        silent call self._path.edit()
-        call self._restoreCursorPos()
-        return
-    endif
-
     call self._path.edit()
+    if self._stay
+        call self._restoreCursorPos()
+    endif
 endfunction
 
 " FUNCTION: Opener._openDirectory(node) {{{1
 function! s:Opener._openDirectory(node)
-    call self._gotoTargetWin()
-
     if self._nerdtree.isWinTree()
+        call self._gotoTargetWin()
         call g:NERDTreeCreator.CreateWindowTree(a:node.path.str())
     else
+        call self._gotoTargetWin()
         if empty(self._where)
             call b:NERDTree.changeRoot(a:node)
         elseif self._where == 't'

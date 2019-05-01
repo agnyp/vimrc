@@ -80,7 +80,6 @@ function! go#package#FromPath(arg) abort
   for dir in dirs
     if len(dir) && match(path, dir) == 0
       let workspace = dir
-      break
     endif
   endfor
 
@@ -88,12 +87,10 @@ function! go#package#FromPath(arg) abort
     return -1
   endif
 
-  let path = substitute(path, '/*$', '', '')
-  let workspace = substitute(workspace . '/src/', '/+', '', '')
   if isdirectory(path)
-    return substitute(path, workspace, '', '')
+    return substitute(path, workspace . 'src/', '', '')
   else
-    return substitute(substitute(path, workspace, '', ''),
+    return substitute(substitute(path, workspace . 'src/', '', ''),
           \ '/' . fnamemodify(path, ':t'), '', '')
   endif
 endfunction

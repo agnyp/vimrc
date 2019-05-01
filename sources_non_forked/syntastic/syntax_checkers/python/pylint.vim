@@ -1,6 +1,6 @@
 "============================================================================
 "File:        pylint.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Parantapa Bhattacharya <parantapa at gmail dot com>
 "
 "============================================================================

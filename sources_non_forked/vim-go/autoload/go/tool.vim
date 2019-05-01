@@ -162,18 +162,6 @@ function! go#tool#FilterValids(items) abort
 endfunction
 
 function! go#tool#ExecuteInDir(cmd) abort
-  " Verify that the directory actually exists. If the directory does not
-  " exist, then assume that the a:cmd should not be executed. Callers expect
-  " to check v:shell_error (via go#util#ShellError()), so execute a command
-  " that will return an error as if a:cmd was run and exited with an error.
-  " This helps avoid errors when working with plugins that use virtual files
-  " that don't actually exist on the file system (e.g. vim-fugitive's
-  " GitDiff).
-  if !isdirectory(expand("%:p:h"))
-    let [out, err] = go#util#Exec(["false"])
-    return ''
-  endif
-
   let old_gopath = $GOPATH
   let old_goroot = $GOROOT
   let $GOPATH = go#path#Detect()
@@ -206,6 +194,7 @@ function! go#tool#Exists(importpath) abort
     return 0
 endfunction
 
+
 " following two functions are from: https://github.com/mattn/gist-vim
 " thanks  @mattn
 function! s:get_browser_command() abort
@@ -213,14 +202,12 @@ function! s:get_browser_command() abort
     if go_play_browser_command == ''
         if go#util#IsWin()
             let go_play_browser_command = '!start rundll32 url.dll,FileProtocolHandler %URL%'
-        elseif go#util#IsMac()
+        elseif has('mac') || has('macunix') || has('gui_macvim') || go#util#System('uname') =~? '^darwin'
             let go_play_browser_command = 'open %URL%'
         elseif executable('xdg-open')
             let go_play_browser_command = 'xdg-open %URL%'
         elseif executable('firefox')
             let go_play_browser_command = 'firefox %URL% &'
-        elseif executable('chromium')
-            let go_play_browser_command = 'chromium %URL% &'
         else
             let go_play_browser_command = ''
         endif

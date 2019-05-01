@@ -1,6 +1,6 @@
 "============================================================================
 "File:        shellcheck.vim
-"Description: Shell script syntax/style checking plugin for syntastic
+"Description: Shell script syntax/style checking plugin for syntastic.vim
 "============================================================================
 
 if exists('g:loaded_syntastic_sh_shellcheck_checker')

@@ -1,6 +1,6 @@
 "============================================================================
 "File:        d.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Alfredo Di Napoli <alfredo dot dinapoli at gmail dot com>
 "License:     Based on the original work of Gregor Uhlenheuer and his
 "             cpp.vim checker so credits are dued.

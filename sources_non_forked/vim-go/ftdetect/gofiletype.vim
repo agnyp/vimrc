@@ -18,17 +18,14 @@ function! s:gofiletype_post()
   let &g:fileencodings = s:current_fileencodings
 endfunction
 
-augroup vim-go-filetype
-  autocmd!
-  au BufNewFile *.go setfiletype go | setlocal fileencoding=utf-8 fileformat=unix
-  au BufRead *.go call s:gofiletype_pre("go")
-  au BufReadPost *.go call s:gofiletype_post()
+au BufNewFile *.go setfiletype go | setlocal fileencoding=utf-8 fileformat=unix
+au BufRead *.go call s:gofiletype_pre("go")
+au BufReadPost *.go call s:gofiletype_post()
 
-  au BufNewFile *.s setfiletype asm | setlocal fileencoding=utf-8 fileformat=unix
-  au BufRead *.s call s:gofiletype_pre("asm")
-  au BufReadPost *.s call s:gofiletype_post()
+au BufNewFile *.s setfiletype asm | setlocal fileencoding=utf-8 fileformat=unix
+au BufRead *.s call s:gofiletype_pre("asm")
+au BufReadPost *.s call s:gofiletype_post()
 
-  au BufRead,BufNewFile *.tmpl set filetype=gohtmltmpl
-augroup end
+au BufRead,BufNewFile *.tmpl set filetype=gohtmltmpl
 
 " vim: sw=2 ts=2 et
