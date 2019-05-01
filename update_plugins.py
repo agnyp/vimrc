@@ -16,7 +16,7 @@ from os import path
 
 #--- Globals ----------------------------------------------
 PLUGINS = """
-vim-yankstack https://github.com/maxbrunsfeld/vim-yankstack
+YankRing.vim https://github.com/vim-scripts/YankRing.vim
 ack.vim https://github.com/mileszs/ack.vim
 bufexplorer https://github.com/corntrace/bufexplorer
 ctrlp.vim https://github.com/ctrlpvim/ctrlp.vim

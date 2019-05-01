@@ -212,11 +212,15 @@ endfunc
 
 " run_guru runs the given guru argument
 function! s:run_guru(args) abort
+  let old_gopath = $GOPATH
+  let $GOPATH = go#path#Detect()
   if go#util#has_job()
     let res = s:async_guru(a:args)
   else
     let res = s:sync_guru(a:args)
   endif
+
+  let $GOPATH = old_gopath
 
   return res
 endfunction
@@ -362,7 +366,7 @@ function! go#guru#DescribeInfo() abort
         \ 'mode': 'describe',
         \ 'format': 'json',
         \ 'selected': -1,
-        \ 'needs_scope': 0,
+        \ 'needs_scope': 1,
         \ 'custom_parse': function('s:info'),
         \ 'disable_progress': 1,
         \ }
