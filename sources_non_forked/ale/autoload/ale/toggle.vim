@@ -48,7 +48,7 @@ function! ale#toggle#Toggle() abort
         endif
     endif
 
-    call ale#events#Init()
+    call ale#autocmd#InitAuGroups()
 endfunction
 
 function! ale#toggle#Enable() abort

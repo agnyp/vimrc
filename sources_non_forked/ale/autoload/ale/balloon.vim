@@ -34,11 +34,7 @@ function! ale#balloon#Expr() abort
 endfunction
 
 function! ale#balloon#Disable() abort
-    if has('balloon_eval_term')
-        set noballoonevalterm
-    endif
-
-    set noballooneval
+    set noballooneval noballoonevalterm
     set balloonexpr=
 endfunction
 

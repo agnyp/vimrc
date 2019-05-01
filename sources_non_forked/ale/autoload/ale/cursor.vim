@@ -56,6 +56,10 @@ function! s:StopCursorTimer() abort
 endfunction
 
 function! ale#cursor#EchoCursorWarning(...) abort
+    return ale#CallWithCooldown('dont_echo_until', function('s:EchoImpl'), [])
+endfunction
+
+function! s:EchoImpl() abort
     if !g:ale_echo_cursor
         return
     endif

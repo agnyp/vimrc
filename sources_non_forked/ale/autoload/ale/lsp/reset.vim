@@ -7,9 +7,9 @@ function! ale#lsp#reset#StopAllLSPs() abort
         call ale#definition#ClearLSPData()
     endif
 
-    if exists('*ale#lsp_linter#ClearLSPData')
+    if exists('*ale#engine#ClearLSPData')
         " Clear the mapping for connections, etc.
-        call ale#lsp_linter#ClearLSPData()
+        call ale#engine#ClearLSPData()
 
         " Remove the problems for all of the LSP linters in every buffer.
         for l:buffer_string in keys(g:ale_buffer_info)

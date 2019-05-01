@@ -72,13 +72,14 @@ function! s:FindReferences(linter) abort
     \   ? function('ale#references#HandleTSServerResponse')
     \   : function('ale#references#HandleLSPResponse')
 
-    let l:lsp_details = ale#lsp_linter#StartLSP(l:buffer, a:linter, l:Callback)
+    let l:lsp_details = ale#linter#StartLSP(l:buffer, a:linter, l:Callback)
 
     if empty(l:lsp_details)
         return 0
     endif
 
     let l:id = l:lsp_details.connection_id
+    let l:root = l:lsp_details.project_root
 
     if a:linter.lsp is# 'tsserver'
         let l:message = ale#lsp#tsserver_message#References(
@@ -89,14 +90,14 @@ function! s:FindReferences(linter) abort
     else
         " Send a message saying the buffer has changed first, or the
         " references position probably won't make sense.
-        call ale#lsp#NotifyForChanges(l:lsp_details)
+        call ale#lsp#Send(l:id, ale#lsp#message#DidChange(l:buffer), l:root)
 
         let l:column = min([l:column, len(getline(l:line))])
 
         let l:message = ale#lsp#message#References(l:buffer, l:line, l:column)
     endif
 
-    let l:request_id = ale#lsp#Send(l:id, l:message, l:lsp_details.project_root)
+    let l:request_id = ale#lsp#Send(l:id, l:message, l:root)
 
     let s:references_map[l:request_id] = {}
 endfunction

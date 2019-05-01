@@ -134,11 +134,7 @@ function! s:ReplaceCompleteopt() abort
         let b:ale_old_completopt = &l:completeopt
     endif
 
-    if &l:completeopt =~# 'preview'
-        let &l:completeopt = 'menu,menuone,preview,noselect,noinsert'
-    else
-        let &l:completeopt = 'menu,menuone,noselect,noinsert'
-    endif
+    let &l:completeopt = 'menu,menuone,preview,noselect,noinsert'
 endfunction
 
 function! ale#completion#OmniFunc(findstart, base) abort
@@ -393,13 +389,14 @@ function! s:GetLSPCompletions(linter) abort
     \   ? function('ale#completion#HandleTSServerResponse')
     \   : function('ale#completion#HandleLSPResponse')
 
-    let l:lsp_details = ale#lsp_linter#StartLSP(l:buffer, a:linter, l:Callback)
+    let l:lsp_details = ale#linter#StartLSP(l:buffer, a:linter, l:Callback)
 
     if empty(l:lsp_details)
         return 0
     endif
 
     let l:id = l:lsp_details.connection_id
+    let l:root = l:lsp_details.project_root
 
     if a:linter.lsp is# 'tsserver'
         let l:message = ale#lsp#tsserver_message#Completions(
@@ -411,7 +408,7 @@ function! s:GetLSPCompletions(linter) abort
     else
         " Send a message saying the buffer has changed first, otherwise
         " completions won't know what text is nearby.
-        call ale#lsp#NotifyForChanges(l:lsp_details)
+        call ale#lsp#Send(l:id, ale#lsp#message#DidChange(l:buffer), l:root)
 
         " For LSP completions, we need to clamp the column to the length of
         " the line. python-language-server and perhaps others do not implement
@@ -427,7 +424,7 @@ function! s:GetLSPCompletions(linter) abort
         \)
     endif
 
-    let l:request_id = ale#lsp#Send(l:id, l:message, l:lsp_details.project_root)
+    let l:request_id = ale#lsp#Send(l:id, l:message, l:root)
 
     if l:request_id
         let b:ale_completion_info.conn_id = l:id
