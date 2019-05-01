@@ -33,16 +33,22 @@ function! go#path#GoPath(...) abort
   let $GOPATH = a:1
 endfunction
 
-" Default returns the default GOPATH. If GOPATH is not set, it uses the
-" default GOPATH set starting with Go 1.8. This GOPATH can be retrieved via
-" 'go env GOPATH'
+" Default returns the default GOPATH. If there is a single GOPATH it returns
+" it. For multiple GOPATHS separated with a the OS specific separator, only
+" the first one is returned. If GOPATH is not set, it uses the default GOPATH
+" set starting with GO 1.8. This GOPATH can be retrieved via 'go env GOPATH'
 function! go#path#Default() abort
   if $GOPATH == ""
     " use default GOPATH via go env
     return go#util#gopath()
   endif
 
-  return $GOPATH
+  let go_paths = split($GOPATH, go#util#PathListSep())
+  if len(go_paths) == 1
+    return $GOPATH
+  endif
+
+  return go_paths[0]
 endfunction
 
 " HasPath checks whether the given path exists in GOPATH environment variable
@@ -128,8 +134,8 @@ function! go#path#BinPath() abort
   elseif $GOBIN != ""
     let bin_path = $GOBIN
   else
-    let go_paths = split(go#path#Default(), go#util#PathListSep())
-    let bin_path = expand(go_paths[0] . "/bin/")
+    " GOPATH (user set or default GO)
+    let bin_path = expand(go#path#Default() . "/bin/")
   endif
 
   return bin_path
