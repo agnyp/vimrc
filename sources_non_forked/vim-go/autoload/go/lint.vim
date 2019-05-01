@@ -10,10 +10,6 @@ if !exists("g:go_metalinter_enabled")
   let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 endif
 
-if !exists("g:go_metalinter_excludes")
-  let g:go_metalinter_excludes = []
-endif
-
 if !exists("g:go_golint_bin")
   let g:go_golint_bin = "golint"
 endif
@@ -42,10 +38,6 @@ function! go#lint#Gometa(autosave, ...) abort
     let linters = a:autosave ? g:go_metalinter_autosave_enabled : g:go_metalinter_enabled
     for linter in linters
       let cmd += ["--enable=".linter]
-    endfor
-
-    for exclude in g:go_metalinter_excludes
-      let cmd += ["--exclude=".exclude]
     endfor
 
     " path
@@ -260,14 +252,23 @@ function s:lint_job(args)
     copen
   endfunction
 
-  function! s:exit_cb(job, exitval) closure
+  function! s:close_cb(chan) closure
+    let l:job = ch_getjob(a:chan)
+    let l:status = job_status(l:job)
+
+    let exitval = 1
+    if l:status == "dead"
+      let l:info = job_info(l:job)
+      let exitval = l:info.exitval
+    endif
+
     let status = {
           \ 'desc': 'last status',
           \ 'type': "gometaliner",
           \ 'state': "finished",
           \ }
 
-    if a:exitval
+    if exitval
       let status.state = "failed"
     endif
 
@@ -296,7 +297,7 @@ function s:lint_job(args)
 
   let start_options = {
         \ 'callback': funcref("s:callback"),
-        \ 'exit_cb': funcref("s:exit_cb"),
+        \ 'close_cb': funcref("s:close_cb"),
         \ }
 
   call job_start(a:args.cmd, start_options)

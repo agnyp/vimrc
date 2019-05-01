@@ -71,25 +71,28 @@ function s:rename_job(args)
 
   let status_dir =  expand('%:p:h')
 
-  function! s:exit_cb(job, exitval) closure
+  function! s:close_cb(chan) closure
+    let l:job = ch_getjob(a:chan)
+    let l:info = job_info(l:job)
+
     let status = {
           \ 'desc': 'last status',
           \ 'type': "gorename",
           \ 'state': "finished",
           \ }
 
-    if a:exitval
+    if l:info.exitval
       let status.state = "failed"
     endif
 
     call go#statusline#Update(status_dir, status)
 
-    call s:parse_errors(a:exitval, a:args.bang, messages)
+    call s:parse_errors(l:info.exitval, a:args.bang, messages)
   endfunction
 
   let start_options = {
         \ 'callback': funcref("s:callback"),
-        \ 'exit_cb': funcref("s:exit_cb"),
+        \ 'close_cb': funcref("s:close_cb"),
         \ }
 
   " modify GOPATH if needed

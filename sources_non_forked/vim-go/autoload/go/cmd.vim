@@ -445,7 +445,7 @@ function s:cmd_job(args) abort
 
   let start_options = {
         \ 'callback': callbacks.callback,
-        \ 'exit_cb': callbacks.exit_cb,
+        \ 'close_cb': callbacks.close_cb,
         \ }
 
   " modify GOPATH if needed

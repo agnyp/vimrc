@@ -155,12 +155,21 @@ function! s:async_guru(args) abort
     endif
   endif
 
-  let messages = []
-  function! s:callback(chan, msg) closure
-    call add(messages, a:msg)
-  endfunction
+  function! s:close_cb(chan) closure
+    let messages = []
+    while ch_status(a:chan, {'part': 'out'}) == 'buffered'
+      let msg = ch_read(a:chan, {'part': 'out'})
+      call add(messages, msg)
+    endwhile
 
-  function! s:exit_cb(job, exitval) closure
+    while ch_status(a:chan, {'part': 'err'}) == 'buffered'
+      let msg = ch_read(a:chan, {'part': 'err'})
+      call add(messages, msg)
+    endwhile
+
+    let l:job = ch_getjob(a:chan)
+    let l:info = job_info(l:job)
+
     let out = join(messages, "\n")
 
     let status = {
@@ -169,22 +178,21 @@ function! s:async_guru(args) abort
           \ 'state': "finished",
           \ }
 
-    if a:exitval
+    if l:info.exitval
       let status.state = "failed"
     endif
 
     call go#statusline#Update(status_dir, status)
 
     if has_key(a:args, 'custom_parse')
-      call a:args.custom_parse(a:exitval, out)
+      call a:args.custom_parse(l:info.exitval, out)
     else
-      call s:parse_guru_output(a:exitval, out, a:args.mode)
+      call s:parse_guru_output(l:info.exitval, out, a:args.mode)
     endif
   endfunction
 
   let start_options = {
-        \ 'callback': funcref("s:callback"),
-        \ 'exit_cb': funcref("s:exit_cb"),
+        \ 'close_cb': funcref("s:close_cb"),
         \ }
 
   if has_key(result, 'stdin_content')

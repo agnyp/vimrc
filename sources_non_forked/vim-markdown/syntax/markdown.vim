@@ -33,10 +33,7 @@ endfor
 unlet! s:type
 unlet! s:done_include
 
-if !exists('g:markdown_minlines')
-  let g:markdown_minlines = 50
-endif
-execute 'syn sync minlines=' . g:markdown_minlines
+syn sync minlines=10
 syn case ignore
 
 syn match markdownValid '[<>]\c[a-z/$!]\@!'
