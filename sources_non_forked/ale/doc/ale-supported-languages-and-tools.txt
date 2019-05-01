@@ -118,7 +118,6 @@ Notes:
   * `mix`!!
 * Elm
   * `elm-format`
-  * `elm-lsp`
   * `elm-make`
 * Erb
   * `erb`
@@ -242,14 +241,12 @@ Notes:
   * `luacheck`
 * Mail
   * `alex`!!
-  * `languagetool`!!
   * `proselint`
   * `vale`
 * Make
   * `checkmake`
 * Markdown
   * `alex`!!
-  * `languagetool`!!
   * `markdownlint`!!
   * `mdl`
   * `prettier`
@@ -420,7 +417,6 @@ Notes:
   * `write-good`
 * Text^
   * `alex`!!
-  * `languagetool`!!
   * `proselint`
   * `redpen`
   * `textlint`

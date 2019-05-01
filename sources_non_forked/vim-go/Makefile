@@ -1,6 +1,6 @@
 VIMS ?= vim-7.4 vim-8.0 nvim
 
-all: install lint test
+all: install test lint
 
 install:
 	@echo "==> Installing Vims: $(VIMS)"

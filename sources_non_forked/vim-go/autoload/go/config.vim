@@ -210,12 +210,6 @@ function! go#config#DebugCommands() abort
   return g:go_debug_commands
 endfunction
 
-function! go#config#LspLog() abort
-  " make sure g:go_lsp_log is set so that it can be added to easily.
-  let g:go_lsp_log = get(g:, 'go_lsp_log', [])
-  return g:go_lsp_log
-endfunction
-
 function! go#config#SetDebugDiag(value) abort
   let g:go_debug_diag = a:value
 endfunction
@@ -241,27 +235,15 @@ function! go#config#SetTemplateAutocreate(value) abort
 endfunction
 
 function! go#config#MetalinterCommand() abort
-  return get(g:, "go_metalinter_command", "gometalinter")
+  return get(g:, "go_metalinter_command", "")
 endfunction
 
 function! go#config#MetalinterAutosaveEnabled() abort
-  let l:default_enabled = ["vet", "golint"]
-
-  if go#config#MetalinterCommand() == "golangci-lint"
-    let l:default_enabled = ["govet", "golint"]
-  endif
-
-  return get(g:, "go_metalinter_autosave_enabled", default_enabled)
+  return get(g:, 'go_metalinter_autosave_enabled', ['vet', 'golint'])
 endfunction
 
 function! go#config#MetalinterEnabled() abort
-  let l:default_enabled = ["vet", "golint", "errcheck"]
-
-  if go#config#MetalinterCommand() == "golangci-lint"
-    let l:default_enabled = ["govet", "golint"]
-  endif
-
-  return get(g:, "go_metalinter_enabled", default_enabled)
+  return get(g:, "go_metalinter_enabled", ['vet', 'golint', 'errcheck'])
 endfunction
 
 function! go#config#MetalinterDisabled() abort
@@ -461,6 +443,7 @@ endfunction
 function! go#config#EchoGoInfo() abort
   return get(g:, "go_echo_go_info", 1)
 endfunction
+
 
 " Set the default value. A value of "1" is a shortcut for this, for
 " compatibility reasons.

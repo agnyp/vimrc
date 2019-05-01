@@ -432,7 +432,9 @@ function! s:TreeDirNode._initChildren(silent)
 
     call self.sortChildren()
 
-    redraw!
+    if !a:silent && len(files) > g:NERDTreeNotificationThreshold
+        call nerdtree#echo("Please wait, caching a large dir ... DONE (". self.getChildCount() ." nodes cached).")
+    endif
 
     if invalidFilesFound
         call nerdtree#echoWarning(invalidFilesFound . " file(s) could not be loaded into the NERD tree")
