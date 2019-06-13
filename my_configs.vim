@@ -86,6 +86,7 @@ map <leader>fN <esc>02f"f,dfe<esc>
 map <leader>d :mksession!<CR>:xa<CR>
 nmap <leader>cf ct_
 nmap <silent> <leader>y :YRShow<CR>
+map <leader>w :wa!<CR>
 
 autocmd VimEnter * unmap! <leader>p
 
