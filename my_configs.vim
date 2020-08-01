@@ -3,6 +3,9 @@ source ~/.vim_runtime/my_scripts/autoread.vim
 source ~/.vim_runtime/my_scripts/less_mode.vim
 " source ~/.vim_runtime/my_scripts/instant-markdown.vim
 
+set visualbell
+set t_vb=
+
 filetype plugin on
 
 " Configure Gundo
