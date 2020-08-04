@@ -12,8 +12,8 @@ filetype plugin on
 if has('python3')
     let g:gundo_prefer_python3 = 1
 endif
-let g:gundo_width = 60
-let g:gundo_preview_height = 40
+let g:gundo_width = 50
+let g:gundo_preview_height = 25
 
 " Watch for changes
 " silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
@@ -32,8 +32,8 @@ autocmd FilterWritePre * if &diff | setlocal wrap< | endif
 
 " Smart way to move between windows
 " like it that way better ...
-unmap <C-h>
-unmap <C-l>
+" unmap <C-h>
+" unmap <C-l>
 map gh <C-W>h
 map gl <C-W>l
 
@@ -47,13 +47,11 @@ map <C-L> i0<C-d><esc>
 " Function keys
 nnoremap <F2> :YRShow<CR>
 nnoremap <F3> :TlistToggle<CR>
-nnoremap <F4> :GundoToggle<CR>
+nnoremap <F7> :GundoToggle<CR>
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
 " remove trailing whitespace
 map <F6> :%s/\s\+$<CR>:noh<CR>
-map <F7> ]c
-map <F8> [c
 map <F9> :set wrap<cr>
 map <C-F9> :set nowrap<cr>
 
