@@ -2284,6 +2284,7 @@ documented in additional help files.
   bib.....................................|ale-bib-options|
     bibclean..............................|ale-bib-bibclean|
   c.......................................|ale-c-options|
+    astyle................................|ale-c-astyle|
     clang.................................|ale-c-clang|
     clangd................................|ale-c-clangd|
     clang-format..........................|ale-c-clangformat|
@@ -2306,6 +2307,7 @@ documented in additional help files.
     cmakelint.............................|ale-cmake-cmakelint|
     cmake-format..........................|ale-cmake-cmakeformat|
   cpp.....................................|ale-cpp-options|
+    astyle................................|ale-cpp-astyle|
     clang.................................|ale-cpp-clang|
     clangd................................|ale-cpp-clangd|
     clangcheck............................|ale-cpp-clangcheck|
@@ -2600,6 +2602,7 @@ documented in additional help files.
     sasslint..............................|ale-scss-sasslint|
     stylelint.............................|ale-scss-stylelint|
   sh......................................|ale-sh-options|
+    bashate...............................|ale-sh-bashate|
     sh-language-server....................|ale-sh-language-server|
     shell.................................|ale-sh-shell|
     shellcheck............................|ale-sh-shellcheck|
@@ -2676,6 +2679,8 @@ documented in additional help files.
     yamllint..............................|ale-yaml-yamllint|
   yang....................................|ale-yang-options|
     yang-lsp..............................|ale-yang-lsp|
+  zig.....................................|ale-zig-options|
+    zls...................................|ale-zig-zls|
 
 
 ===============================================================================

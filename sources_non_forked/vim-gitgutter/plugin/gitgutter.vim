@@ -62,7 +62,7 @@ else
   call s:set('g:gitgutter_sign_removed_first_line', '_^')
 endif
 
-call s:set('g:gitgutter_sign_removed_above_and_below', '[')
+call s:set('g:gitgutter_sign_removed_above_and_below', '_¯')
 call s:set('g:gitgutter_sign_modified_removed',       '~_')
 call s:set('g:gitgutter_git_args',                      '')
 call s:set('g:gitgutter_diff_relative_to',         'index')
@@ -73,6 +73,7 @@ call s:set('g:gitgutter_terminal_reports_focus',         1)
 call s:set('g:gitgutter_async',                          1)
 call s:set('g:gitgutter_log',                            0)
 call s:set('g:gitgutter_use_location_list',              0)
+call s:set('g:gitgutter_close_preview_on_escape',        0)
 
 call s:set('g:gitgutter_git_executable', 'git')
 if !executable(g:gitgutter_git_executable)
