@@ -33,7 +33,7 @@ function! s:get_color(group, attr)
 endfunction
 
 function! s:set_color(group, attr, color)
-  let gui = a:color =~ '^#'
+  let gui = has('gui_running') || has('termguicolors') && &termguicolors
   execute printf('hi %s %s%s=%s', a:group, gui ? 'gui' : 'cterm', a:attr, a:color)
 endfunction
 
@@ -122,7 +122,7 @@ function! s:tranquilize()
 endfunction
 
 function! s:hide_statusline()
-  let &l:statusline = repeat(' ', winwidth(0))
+  setlocal statusline=\ 
 endfunction
 
 function! s:hide_linenr()
@@ -203,7 +203,7 @@ function! s:goyo_on(dim)
   endif
 
   " vim-signify
-  let t:goyo_disabled_signify = exists('b:sy') && b:sy.active
+  let t:goyo_disabled_signify = !empty(getbufvar(bufnr(''), 'sy'))
   if t:goyo_disabled_signify
     SignifyToggle
   endif
@@ -239,7 +239,7 @@ function! s:goyo_on(dim)
   set showtabline=0
   set noruler
   set fillchars+=vert:\ 
-  set fillchars+=stl:.
+  set fillchars+=stl:\ 
   set fillchars+=stlnc:\ 
   set sidescroll=1
   set sidescrolloff=0
@@ -260,7 +260,7 @@ function! s:goyo_on(dim)
 
   augroup goyo
     autocmd!
-    autocmd TabLeave    *        call s:goyo_off()
+    autocmd TabLeave    * nested call s:goyo_off()
     autocmd VimResized  *        call s:resize_pads()
     autocmd ColorScheme *        call s:tranquilize()
     autocmd BufWinEnter *        call s:hide_linenr() | call s:hide_statusline()
