@@ -5,6 +5,7 @@ source ~/.vim_runtime/my_scripts/less_mode.vim
 
 set visualbell
 set t_vb=
+set cursorline
 
 filetype plugin on
 
@@ -30,31 +31,6 @@ endif
 autocmd FilterWritePre * if &diff | setlocal wrap< | endif
 
 
-" Smart way to move between windows
-" like it that way better ...
-" unmap <C-h>
-" unmap <C-l>
-map gh <C-W>h
-map gl <C-W>l
-
-" map 0 back
-map 0 0
-nmap # '
-
-" remove all indentation from line
-map <C-L> i0<C-d><esc>
-
-" Function keys
-nnoremap <F2> :YRShow<CR>
-nnoremap <F3> :TlistToggle<CR>
-nnoremap <F7> :GundoToggle<CR>
-nnoremap <F5> :call LessMode()<CR>
-inoremap <F5> <Esc>:call LessMode()<CR>
-" remove trailing whitespace
-map <F6> :%s/\s\+$<CR>:noh<CR>
-map <F9> :set wrap<cr>
-map <C-F9> :set nowrap<cr>
-
 " Settings for solarized fonts
 set t_Co=16
 let g:solarized_termcolors=256
@@ -71,6 +47,31 @@ set number
 " Indent to 2
 set shiftwidth=2
 set tabstop=2
+
+" Smart way to move between windows
+" like it that way better ...
+" unmap <C-h>
+" unmap <C-l>
+map gh <C-W>h
+map gl <C-W>l
+
+" map 0 back
+map 0 0
+nmap # '
+
+" remove all indentation from line
+map <C-L> i0<C-d><esc>
+
+" Function keys
+nnoremap <F9> :YRShow<CR>
+nnoremap <F8> :TlistToggle<CR>
+nnoremap <F7> :GundoToggle<CR>
+nnoremap <F5> :call LessMode()<CR>
+inoremap <F5> <Esc>:call LessMode()<CR>
+" remove trailing whitespace
+map <F6> :%s/\s\+$<CR>:noh<CR>
+map <F9> :set wrap<cr>
+map <C-F9> :set nowrap<cr>
 
 " some leader-stuff
 map <leader>co <esc>oconsole.log('huhu')<esc>Fh,<esc>==
