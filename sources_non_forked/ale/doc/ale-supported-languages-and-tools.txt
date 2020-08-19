@@ -21,6 +21,7 @@ Notes:
   * `drafter`
 * AsciiDoc
   * `alex`!!
+  * `languagetool`!!
   * `proselint`
   * `redpen`
   * `textlint`
@@ -372,6 +373,7 @@ Notes:
   * `pylint`!!
   * `pyls`
   * `pyre`
+  * `pyright`
   * `reorder-python-imports`
   * `vulture`!!
   * `yapf`
@@ -452,6 +454,7 @@ Notes:
 * Swift
   * `sourcekit-lsp`
   * `swiftformat`
+  * `swift-format`
   * `swiftlint`
 * Tcl
   * `nagelfar`!!
@@ -483,6 +486,7 @@ Notes:
 * VALA
   * `uncrustify`
 * Verilog
+  * `hdl-checker`
   * `iverilog`
   * `verilator`
   * `vlog`

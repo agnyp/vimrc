@@ -30,6 +30,7 @@ formatting.
   * [drafter](https://github.com/apiaryio/drafter)
 * AsciiDoc
   * [alex](https://github.com/wooorm/alex) :floppy_disk:
+  * [languagetool](https://languagetool.org/) :floppy_disk:
   * [proselint](http://proselint.com/)
   * [redpen](http://redpen.cc/)
   * [textlint](https://textlint.github.io/)
@@ -381,6 +382,7 @@ formatting.
   * [pylint](https://www.pylint.org/) :floppy_disk:
   * [pyls](https://github.com/palantir/python-language-server) :warning:
   * [pyre](https://github.com/facebook/pyre-check) :warning:
+  * [pyright](https://github.com/microsoft/pyright)
   * [reorder-python-imports](https://github.com/asottile/reorder_python_imports)
   * [vulture](https://github.com/jendrikseipp/vulture) :warning: :floppy_disk:
   * [yapf](https://github.com/google/yapf)
@@ -461,6 +463,7 @@ formatting.
 * Swift
   * [sourcekit-lsp](https://github.com/apple/sourcekit-lsp)
   * [swiftformat](https://github.com/nicklockwood/SwiftFormat)
+  * [swift-format](https://github.com/apple/swift-format)
   * [swiftlint](https://github.com/realm/SwiftLint)
 * Tcl
   * [nagelfar](http://nagelfar.sourceforge.net) :floppy_disk:
@@ -492,6 +495,7 @@ formatting.
 * VALA
   * [uncrustify](https://github.com/uncrustify/uncrustify)
 * Verilog
+  * [hdl-checker](https://pypi.org/project/hdl-checker)
   * [iverilog](https://github.com/steveicarus/iverilog)
   * [verilator](http://www.veripool.org/projects/verilator/wiki/Intro)
   * [vlog](https://www.mentor.com/products/fv/questa/)
