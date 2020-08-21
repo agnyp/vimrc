@@ -15,6 +15,7 @@ from os import path
 
 # --- Globals ----------------------------------------------
 PLUGINS = """
+diffconflicts https://github.com/whiteinge/diffconflicts
 auto-pairs https://github.com/jiangmiao/auto-pairs
 ale https://github.com/w0rp/ale
 vim-yankstack https://github.com/maxbrunsfeld/vim-yankstack
