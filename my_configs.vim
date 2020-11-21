@@ -63,15 +63,15 @@ nmap # '
 map <C-L> i0<C-d><esc>
 
 " Function keys
-nnoremap <F9> :YRShow<CR>
-nnoremap <F8> :TlistToggle<CR>
-nnoremap <F7> :GundoToggle<CR>
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
-" remove trailing whitespace
 map <F6> :%s/\s\+$<CR>:noh<CR>
-map <F9> :set wrap<cr>
+nnoremap <F7> :GundoToggle<CR>
+nnoremap <F8> :TlistToggle<CR>
+nnoremap <F9> :YRShow<CR>
+map <F9> :set wrap<cr> " remove trailing whitespace
 map <C-F9> :set nowrap<cr>
+set pastetoggle=<F10>
 
 " some leader-stuff
 map <leader>co <esc>oconsole.log('huhu')<esc>Fh,<esc>==
