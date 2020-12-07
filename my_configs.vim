@@ -72,6 +72,7 @@ nnoremap <F9> :YRShow<CR>
 map <F9> :set wrap<cr> " remove trailing whitespace
 map <C-F9> :set nowrap<cr>
 set pastetoggle=<F10>
+map <S-F10> :redraw!<cr>
 
 " some leader-stuff
 map <leader>co <esc>oconsole.log('huhu')<esc>Fh,<esc>==
