@@ -65,11 +65,11 @@ map <C-L> i0<C-d><esc>
 " Function keys
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
-map <F6> :%s/\s\+$<CR>:noh<CR>
+map <F6> :%s/\s\+$<CR>:noh<CR> " remove trailing whitespace
 nnoremap <F7> :GundoToggle<CR>
 nnoremap <F8> :TlistToggle<CR>
 nnoremap <F9> :YRShow<CR>
-map <F9> :set wrap<cr> " remove trailing whitespace
+map <F9> :set wrap<cr>
 map <C-F9> :set nowrap<cr>
 set pastetoggle=<F10>
 map <S-F10> :redraw!<cr>
@@ -92,11 +92,14 @@ nmap <silent> <leader>y :YRShow<CR>
 
 autocmd VimEnter * unmap! <leader>p
 
-" Brackets and stuff
-inoremap $r #{}<esc>i
-vnoremap $r <esc>`>a}<esc>`<i#{<esc>
-inoremap $t "#{}"<esc>i
-vnoremap $t <esc>`>a}"<esc>`<i"#{<esc>h
+" Brackets and stuff -> Should be done with auto-pairs now
+" inoremap $r #{}<esc>i
+" vnoremap $r <esc>`>a}<esc>`<i#{<esc>
+" inoremap $t "#{}"<esc>i
+" vnoremap $t <esc>`>a}"<esc>`<i"#{<esc>h
+
+" autopair
+let g:AutoPairsShortcutToggle = '<C-A>'
 
 " move lines
 nnoremap <C-Down> :m .+1<CR>==
@@ -105,3 +108,4 @@ inoremap <C-Down> <Esc>:m .+1<CR>==gi
 inoremap <C-Up> <Esc>:m .-2<CR>==gi
 vnoremap <C-Down> :m '>+1<CR>gv=gv
 vnoremap <C-Up> :m '<-2<CR>gv=gv
+
