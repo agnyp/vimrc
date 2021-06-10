@@ -62,6 +62,8 @@ nmap # '
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
 
+set pastetoggle=<C-x>
+
 " Function keys
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
@@ -71,8 +73,6 @@ nnoremap <F8> :TlistToggle<CR>
 nnoremap <F9> :YRShow<CR>
 map <F9> :set wrap<cr>
 map <C-F9> :set nowrap<cr>
-set pastetoggle=<F10>
-map <S-F10> :redraw!<cr>
 
 " some leader-stuff
 map <leader>co <esc>oconsole.log('huhu')<esc>Fh,<esc>==
@@ -80,7 +80,7 @@ map <leader>ww <esc>:w !sudo tee %<cr>
 map <leader>h :map <Space <del>><cr>
 map <leader>c :q<cr>
 map <leader>s <C-F>
-map <leader>t <C-S>
+map <leader>rr :redraw!<cr>
 map <leader>l :source ~/.vimrc<cr>
 map <leader>fo <esc>02f'a, :focus => true<esc>
 map <leader>fO <esc>02f"a, :focus => true<esc>
