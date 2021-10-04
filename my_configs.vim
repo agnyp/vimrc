@@ -82,10 +82,10 @@ map <leader>c :q<cr>
 map <leader>s <C-F>
 map <leader>rr :redraw!<cr>
 map <leader>l :source ~/.vimrc<cr>
-map <leader>fo <esc>02f'a, :focus => true<esc>
-map <leader>fO <esc>02f"a, :focus => true<esc>
-map <leader>fn <esc>02f'f,dfe<esc>
-map <leader>fN <esc>02f"f,dfe<esc>
+map <leader>fo <esc>02f"a, :focus => true<esc>
+map <leader>fO <esc>02f'a, :focus => true<esc>
+map <leader>fn <esc>02f"f,dfe<esc>
+map <leader>fN <esc>02f'f,dfe<esc>
 map <leader>d :mksession!<CR>:xa<CR>
 nmap <leader>cf ct_
 nmap <silent> <leader>y :YRShow<CR>
