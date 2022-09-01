@@ -59,6 +59,8 @@ map gl <C-W>l
 map 0 0
 nmap # '
 
+runtime macros/matchit.vim
+
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
 
@@ -93,10 +95,10 @@ nmap <silent> <leader>y :YRShow<CR>
 autocmd VimEnter * unmap! <leader>p
 
 " Brackets and stuff -> Should be done with auto-pairs now
-" inoremap $r #{}<esc>i
-" vnoremap $r <esc>`>a}<esc>`<i#{<esc>
-" inoremap $t "#{}"<esc>i
-" vnoremap $t <esc>`>a}"<esc>`<i"#{<esc>h
+inoremap $r #{}<esc>i
+vnoremap $r <esc>`>a}<esc>`<i#{<esc>
+inoremap $t "#{}"<esc>i
+vnoremap $t <esc>`>a}"<esc>`<i"#{<esc>h
 
 " autopair
 let g:AutoPairsShortcutToggle = '<C-A>'
