@@ -43,7 +43,8 @@ au FocusGained,BufEnter * checktime
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
+let mapleader = " "
+let g:mapleader = " "
 
 " Fast saving
 nmap <leader>w :w!<cr>
