@@ -1,6 +1,16 @@
 require 'vimrunner'
 require 'vimrunner/rspec'
 
+RSpec.configure do |config|
+  # reset globals to default values before each test
+  config.before(:each) do
+    vim.command 'let g:ruby_indent_access_modifier_style = "normal"'
+    vim.command 'let g:ruby_indent_block_style = "do"'
+    vim.command 'let g:ruby_indent_assignment_style = "hanging"'
+    vim.command 'let g:ruby_indent_hanging_elements = 1'
+  end
+end
+
 Vimrunner::RSpec.configure do |config|
   config.reuse_server = true
 
@@ -23,6 +33,19 @@ Vimrunner::RSpec.configure do |config|
     vim.write
 
     expect(IO.read(filename)).to eq string
+  end
+
+  def assert_correct_indent_in_insert(extension='rb', content, input, result)
+    filename = "test.#{extension}"
+
+    IO.write filename, content
+
+    vim.edit filename
+    vim.normal 'Go'
+    vim.feedkeys input
+    vim.write
+
+    expect(IO.read(filename)).to eq result
   end
 
   def assert_correct_highlighting(extension='rb', string, patterns, group)
