@@ -21,6 +21,11 @@ let g:gundo_preview_height = 25
 au FocusGained,BufEnter,CursorMovedI,CursorMoved * :silent! !
 " au FocusLost,WinLeave * :silent! w
 
+" statusline
+let g:lightline = {
+      \ 'colorscheme': 'solarized',
+      \ }
+
 " Vimdiff-stuff
 " ignore whitespace in vimdiff
 if &diff
