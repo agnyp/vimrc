@@ -18,7 +18,7 @@ let g:gundo_preview_height = 25
 " Watch for changes
 " silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
 " au FocusGained,BufEnter,CursorMoved * :silent! !
-au FocusGained,BufEnter,CursorMovedI,CursorMoved * :silent! !
+" au FocusGained,BufEnter,CursorMovedI,CursorMoved * :silent! !
 " au FocusLost,WinLeave * :silent! w
 
 " statusline
