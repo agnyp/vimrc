@@ -16,6 +16,9 @@ endif
 let g:gundo_width = 50
 let g:gundo_preview_height = 25
 
+" Unicode-Plugin
+nmap ga <Plug>(UnicodeGA)
+
 " Watch for changes
 " silent execute WatchForChanges('*', {'toggle':1,'autoread':1})
 " au FocusGained,BufEnter,CursorMoved * :silent! !
@@ -64,7 +67,7 @@ runtime macros/matchit.vim
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
 
-set pastetoggle=<C-x>
+set pastetoggle=<C-y>
 
 " Function keys
 nnoremap <F5> :call LessMode()<CR>
