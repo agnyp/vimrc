@@ -26,8 +26,15 @@ nmap ga <Plug>(UnicodeGA)
 
 " statusline
 let g:lightline = {
-      \ 'colorscheme': 'solarized',
-      \ }
+      \   'colorscheme': 'solarized',
+      \    'active': {
+      \      'left': [ [ 'mode', 'paste' ],
+      \                [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \    },
+      \    'component_function': {
+      \      'gitbranch': 'FugitiveHead'
+      \    },
+      \  }
 
 " Vimdiff-stuff
 " ignore whitespace in vimdiff
