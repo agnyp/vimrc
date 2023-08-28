@@ -83,7 +83,8 @@ set pastetoggle=<C-y>
 " Function keys
 nnoremap <F5> :call LessMode()<CR>
 inoremap <F5> <Esc>:call LessMode()<CR>
-map <F6> :%s/\s\+$<CR>:noh<CR> " remove trailing whitespace
+" remove trailing whitespace
+map <F6> :%s/\s\+$<CR>:noh<CR>
 nnoremap <F7> :GundoToggle<CR>
 nnoremap <F8> :TlistToggle<CR>
 nnoremap <F9> :YRShow<CR>
