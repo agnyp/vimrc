@@ -78,7 +78,7 @@ runtime macros/matchit.vim
 " remove all indentation from line
 map <C-L> i0<C-d><esc>
 
-set pastetoggle=<C-y>
+set pastetoggle=<C-x><C-y>
 
 " Function keys
 nnoremap <F5> :call LessMode()<CR>
@@ -116,7 +116,7 @@ inoremap $t "#{}"<esc>i
 vnoremap $t <esc>`>a}"<esc>`<i"#{<esc>h
 
 " autopair
-let g:AutoPairsShortcutToggle = '<C-A>'
+" let g:AutoPairsShortcutToggle = '<C-A>'
 
 " move lines
 nnoremap <C-Down> :m .+1<CR>==
