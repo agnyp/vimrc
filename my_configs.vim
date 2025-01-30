@@ -106,6 +106,8 @@ map <leader>fN <esc>02f'f,dfe<esc>
 map <leader>d :mksession!<CR>:xa<CR>
 nmap <leader>cf ct_
 nmap <silent> <leader>y :YRShow<CR>
+map <leader>n ]c
+map <leader>p [c
 
 autocmd VimEnter * unmap! <leader>p
 
